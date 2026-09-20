@@ -1,6 +1,8 @@
-"""Milestone 1 sanity check: load the UR5e MJCF model and open the MuJoCo viewer."""
+"""Headless sanity check (run inside the ROS2 Docker container): load the UR5e
+MJCF model and step the physics a few times. No GUI window is opened here —
+use `mjpython scripts/test_mujoco_viewer.py` on the host macOS for the
+interactive viewer (see docker/README.md for why)."""
 import mujoco
-import mujoco.viewer
 
 MODEL_PATH = "/opt/mujoco_menagerie/universal_robots_ur5e/scene.xml"
 
@@ -9,7 +11,7 @@ data = mujoco.MjData(model)
 
 print(f"Loaded model with {model.nq} DoF")
 
-with mujoco.viewer.launch_passive(model, data) as viewer:
-    while viewer.is_running():
-        mujoco.mj_step(model, data)
-        viewer.sync()
+for _ in range(100):
+    mujoco.mj_step(model, data)
+
+print("Stepped physics 100 times successfully. qpos:", data.qpos)

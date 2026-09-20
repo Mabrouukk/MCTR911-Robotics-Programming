@@ -15,6 +15,9 @@ log/
 # Docker
 docker/*.log
 
+# MuJoCo
+MUJOCO_LOG.TXT
+
 # Large raw video captures (keep only final compressed/linked versions)
 Milestone 01/videos/*.mov
 Milestone 01/videos/raw_*
