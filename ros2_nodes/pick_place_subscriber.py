@@ -1,6 +1,3 @@
-"""ROS2 node that listens to /ur5e/task_status and logs each update, standing
-in for a monitoring/HMI node watching the UR5e pick-and-place cycle."""
-import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 

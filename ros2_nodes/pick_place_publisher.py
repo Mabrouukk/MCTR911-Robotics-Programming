@@ -1,7 +1,3 @@
-"""ROS2 node that publishes the status of a simulated UR5e pick-and-place
-cycle on the topic /ur5e/task_status, one step every 1.5 seconds, looping.
-This stands in for the real robot controller, which will be built in later
-milestones - for now it proves ROS2 publishing works end-to-end."""
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
