@@ -8,8 +8,12 @@
 
 | Name | ID | GitHub |
 |------|----|--------|
-| Mahmoud Ghobashy | TBD | TBD |
-| ... | ... | ... |
+| Mahmoud Ghobashy | 58-2432 |  |
+| Kevin Ezzat | 58-0408 | ... |
+| Seif Hassan | 6034 | ... |
+| Mohamed Elsayed | 58-16392 | ... |
+| fawzy kARIM | 9263| ... |
+
 
 Contact person (per registration form): TBD
 
