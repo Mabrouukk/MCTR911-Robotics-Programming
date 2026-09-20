@@ -13,7 +13,7 @@ import mujoco
 import mujoco.viewer
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ARM_PATH = os.path.join(PROJECT_ROOT, "Milestone 01", "cad_models", "ur5e", "ur5e.xml")
+ARM_PATH = os.path.join(PROJECT_ROOT, "Milestone 01", "cad_models", "ur5e", "scene.xml")
 GRIPPER_PATH = os.path.join(
     PROJECT_ROOT, "Milestone 01", "cad_models", "robotiq_2f85", "2f85.xml"
 )
