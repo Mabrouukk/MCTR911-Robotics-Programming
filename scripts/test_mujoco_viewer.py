@@ -3,8 +3,8 @@ import os
 import mujoco
 import mujoco.viewer
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(HERE, "Milestone 01", "cad_models", "ur5e", "scene.xml")
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODEL_PATH = os.path.join(PROJECT_ROOT, "Milestone 01", "cad_models", "ur5e", "scene.xml")
 
 model = mujoco.MjModel.from_xml_path(MODEL_PATH)
 data = mujoco.MjData(model)
