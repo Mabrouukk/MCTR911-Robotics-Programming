@@ -73,6 +73,14 @@ which supports the application choice above and gives us access to a large
 body of published kinematic/dynamic parameters for validation in later
 milestones.
 
+**End effector:** the UR5e ships without a gripper (real deployments bolt on
+whichever end effector suits the task), so we attach a **Robotiq 2F-85**
+two-finger adaptive gripper — the most common real-world pairing with the
+UR5e in industrial pick-and-place cells — to the arm's built-in
+`attachment_site` at the wrist flange. Its open-source MJCF model also comes
+from `mujoco_menagerie`
+(https://github.com/google-deepmind/mujoco_menagerie/tree/main/robotiq_2f85).
+
 ## References
 
 1. Denavit, J., & Hartenberg, R. S. (1955). A kinematic notation for
