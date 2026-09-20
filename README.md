@@ -10,9 +10,9 @@
 |------|----|--------|
 | Mahmoud Ghobashy | 58-2432 |  |
 | Kevin Ezzat | 58-0408 | ... |
-| Seif Hassan | 6034 | ... |
+| Seif Hassan | 58-6034 | ... |
 | Mohamed Elsayed | 58-16392 | ... |
-| fawzy karim | 9263| ... |
+| fawzy karim | 58-9263| ... |
 
 
 Contact person (per registration form): TBD

@@ -1,8 +1,8 @@
 # Milestone 1 — Literature Review & Project Flow
 
 **Course:** MCTR911 – Robotics Programming, Winter 2026
-**Team:** Mahmoud Ghobashy (58-2432), Kevin Ezzat (58-0408), Seif Hassan (6034),
-Mohamed Elsayed (58-16392), Fawzy Karim (9263)
+**Team:** Mahmoud Ghobashy (58-2432), Kevin Ezzat (58-0408), Seif Hassan (58-6034),
+Mohamed Elsayed (58-16392), Fawzy Karim (58-9263)
 **Selected robot:** Universal Robots UR5e (6-DOF collaborative industrial arm)
 **Selected application:** Pick-and-place / palletizing on a conveyor line
 
