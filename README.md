@@ -12,7 +12,7 @@
 | Kevin Ezzat | 58-0408 | ... |
 | Seif Hassan | 6034 | ... |
 | Mohamed Elsayed | 58-16392 | ... |
-| fawzy kARIM | 9263| ... |
+| fawzy karim | 9263| ... |
 
 
 Contact person (per registration form): TBD
