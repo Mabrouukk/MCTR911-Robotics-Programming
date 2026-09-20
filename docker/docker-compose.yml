@@ -1,0 +1,15 @@
+services:
+  robotics:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mctr911-ros2-mujoco:latest
+    container_name: mctr911
+    environment:
+      - DISPLAY=host.docker.internal:0
+      - LIBGL_ALWAYS_INDIRECT=1
+    volumes:
+      - ..:/workspace
+    network_mode: bridge
+    stdin_open: true
+    tty: true

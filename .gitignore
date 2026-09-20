@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# ROS2
+build/
+install/
+log/
+
+# Docker
+docker/*.log
+
+# Large raw video captures (keep only final compressed/linked versions)
+Milestone 01/videos/*.mov
+Milestone 01/videos/raw_*
