@@ -12,7 +12,6 @@ CYCLE = [
     "Returning to home pose",
 ]
 
-
 class PickPlaceStatusPublisher(Node):
     def __init__(self):
         super().__init__("ur5e_pick_place_publisher")
