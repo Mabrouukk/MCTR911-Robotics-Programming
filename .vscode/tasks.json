@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run: MuJoCo demo",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_mujoco_demo.sh",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run: ROS2 publisher",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_ros2_publisher.sh",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run: ROS2 subscriber",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_ros2_subscriber.sh",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

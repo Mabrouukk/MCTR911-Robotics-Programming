@@ -35,7 +35,7 @@ def main():
     rclpy.init()
     node = PickPlaceStatusPublisher()
     try:
-        rclpy.spin(node) # de el function el 
+        rclpy.spin(node) # de el function el by keep the node running w listening for messages 
     except KeyboardInterrupt:
         pass
     finally:
