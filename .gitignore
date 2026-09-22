@@ -18,6 +18,9 @@ docker/*.log
 # MuJoCo
 MUJOCO_LOG.TXT
 
-# Large raw video captures (keep only final compressed/linked versions)
-Milestone 01/videos/*.mov
+# Large raw video captures (keep only final compressed .mp4 versions)
+# Applies anywhere in the repo, not just videos/, so a raw screen recording
+# dragged into the project root can't get committed by accident (GitHub
+# hard-blocks any file over 100MB anyway).
+*.mov
 Milestone 01/videos/raw_*
