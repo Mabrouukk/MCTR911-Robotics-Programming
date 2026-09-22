@@ -8,11 +8,11 @@
 
 | Name | ID | GitHub |
 |------|----|--------|
-| Mahmoud Ghobashy | 58-2432 |  |
-| Kevin Ezzat | 58-0408 | ... |
-| Seif Hassan | 58-6034 | ... |
-| Mohamed Elsayed | 58-16392 | ... |
-| fawzy karim | 58-9263| ... |
+| Mahmoud Ghobashy | 58-2432 | [@Mabrouukk](https://github.com/Mabrouukk) |
+| Kevin Ezzat | 58-0408 | [@kevinezzat](https://github.com/kevinezzat) |
+| Seif Hassan | 58-6034 | [@seifeldin](https://github.com/seifeldin) |
+| Mohamed Elsayed | 58-16392 | [@ME312241](https://github.com/ME312241) |
+| fawzy karim | 58-9263 | [@FawzyKareem](https://github.com/FawzyKareem) |
 
 
 Contact person (per registration form): Mahmoud.Ghobashy
