@@ -15,7 +15,7 @@
 | fawzy karim | 58-9263| ... |
 
 
-Contact person (per registration form): TBD
+Contact person (per registration form): Mahmoud.Ghobashy
 
 ## Repository structure
 
