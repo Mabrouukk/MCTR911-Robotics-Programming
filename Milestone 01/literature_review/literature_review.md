@@ -35,7 +35,7 @@ special tricks.
 **Trajectory planning.** For pick-and-place tasks specifically, most
 real-world systems move between poses using joint-space trajectories (things
 like trapezoidal or quintic polynomial profiles) when the exact path doesn't
-matter, and switch to task-space (Cartesian) trajectories when it does — for
+matter, and switch to task-space (Cartesian) trajectories when it does, for
 example, when the arm needs to avoid hitting a conveyor guard or the edge of
 a pallet on the way.
 
