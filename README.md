@@ -1,4 +1,4 @@
-# MCTR911 – Robotics Programming Project (Winter 2026)
+# MCTR911 – Robotics Programming Project
 
 **Robot:** Universal Robots UR5e (6-DOF industrial manipulator)
 **Application:** Pick-and-place / palletizing on a conveyor line
