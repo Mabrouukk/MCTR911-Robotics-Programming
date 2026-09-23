@@ -15,7 +15,7 @@
 | fawzy karim | 58-9263 | [@FawzyKareem](https://github.com/FawzyKareem) |
 
 
-Contact person (per registration form): Mahmoud.Ghobashy
+Contact person : Mahmoud.Ghobashy
 
 ## Repository structure
 
