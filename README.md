@@ -23,7 +23,7 @@ Contact person : Mahmoud.Ghobashy@student.guc.edu.eg
 ```
 MCTR/
 ├── Milestone 01/
-│   ├── literature_review/   # 1-2 page literature review + project flow
+│   ├── literature_review/   # page literature review + project flow
 │   ├── cad_models/          # UR5e + Robotiq 2F-85 MJCF models (from mujoco_menagerie)
 │   └── videos/              # demo videos of ROS2 + MuJoCo running
 ├── docker/                  # ROS2 + MuJoCo containerized environment
