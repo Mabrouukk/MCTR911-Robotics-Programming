@@ -1,6 +1,7 @@
-# MCTR911 – Robotics Programming Project
+Robotics Programming Project TEAM 5
 
 **Robot:** Universal Robots UR5e (6-DOF industrial manipulator)
+**Gripper:** Robotiq 2F-85 (attached at the UR5e's wrist)
 **Application:** Pick-and-place / palletizing on a conveyor line
 **Tools:** ROS2 (Humble), MuJoCo, Python, Docker
 
@@ -23,7 +24,7 @@ Contact person : Mahmoud.Ghobashy@student.guc.edu.eg
 MCTR/
 ├── Milestone 01/
 │   ├── literature_review/   # 1-2 page literature review + project flow
-│   ├── cad_models/          # UR5e MJCF/URDF model (from mujoco_menagerie)
+│   ├── cad_models/          # UR5e + Robotiq 2F-85 MJCF models (from mujoco_menagerie)
 │   └── videos/              # demo videos of ROS2 + MuJoCo running
 ├── docker/                  # ROS2 + MuJoCo containerized environment
 └── README.md
