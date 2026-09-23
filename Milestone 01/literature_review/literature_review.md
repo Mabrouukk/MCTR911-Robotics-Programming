@@ -13,7 +13,7 @@ The idea is simple: the UR5e picks up a part as it arrives on a conveyor and
 places it somewhere else, like stacking it onto a pallet in a specific
 position. This is one of the most common jobs given to 6-DOF arms in real
 factories and warehouses, and we picked it because it naturally covers
-everything this course is about — figuring out the arm's kinematics, planning
+everything this course is about, figuring out the arm's kinematics, planning
 a path from the pick point to the place point, and controlling the motors so
 the arm actually follows that path reliably, even if the part's weight
 changes.
@@ -35,13 +35,13 @@ special tricks.
 **Trajectory planning.** For pick-and-place tasks specifically, most
 real-world systems move between poses using joint-space trajectories (things
 like trapezoidal or quintic polynomial profiles) when the exact path doesn't
-matter, and switch to task-space (Cartesian) trajectories when it does — for
+matter, and switch to task-space (Cartesian) trajectories when it does, for
 example, when the arm needs to avoid hitting a conveyor guard or the edge of
 a pallet on the way.
 
 **Control.** Most papers and real deployments we looked at use PID control or
 computed-torque control at the joint level for this kind of task. Nothing
-too exotic — the goal is just to reach each pick/place pose precisely and
+too exotic, the goal is just to reach each pick/place pose precisely and
 repeatably, not to do anything fancy.
 
 **Simulation.** MuJoCo shows up a lot in recent manipulator research and in
