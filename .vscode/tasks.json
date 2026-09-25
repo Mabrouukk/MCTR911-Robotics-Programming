@@ -7,6 +7,35 @@
             "command": "${workspaceFolder}/scripts/run_ms1.sh",
             "presentation": { "reveal": "always", "panel": "new" },
             "problemMatcher": []
+        },
+        {
+            "label": "Run Milestone 2",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_ms2.sh ${input:ms2Mode}",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Milestone 2 (IK to a point)",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_ms2.sh ik --xyz ${input:ikTarget}",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "ms2Mode",
+            "type": "pickString",
+            "description": "Which input should drive the joints?",
+            "options": ["sequence", "sine", "constant", "sliders"],
+            "default": "sequence"
+        },
+        {
+            "id": "ikTarget",
+            "type": "promptString",
+            "description": "World x y z in meters (conveyor: -0.2 0.6 0.55, pallet: 0.6 -0.15 0.45)",
+            "default": "-0.2 0.6 0.55"
         }
     ]
 }
