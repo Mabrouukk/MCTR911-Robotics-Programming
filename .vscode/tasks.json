@@ -2,34 +2,89 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run: MuJoCo demo",
+            "label": "M1: MuJoCo demo",
             "type": "shell",
             "command": "${workspaceFolder}/scripts/run_mujoco_demo.sh",
-            "presentation": {
-                "reveal": "always",
-                "panel": "new"
-            },
+            "presentation": { "reveal": "always", "panel": "new" },
             "problemMatcher": []
         },
         {
-            "label": "Run: ROS2 publisher",
+            "label": "M1: ROS2 publisher",
             "type": "shell",
             "command": "${workspaceFolder}/scripts/run_ros2_publisher.sh",
-            "presentation": {
-                "reveal": "always",
-                "panel": "new"
-            },
+            "presentation": { "reveal": "always", "panel": "new" },
             "problemMatcher": []
         },
         {
-            "label": "Run: ROS2 subscriber",
+            "label": "M1: ROS2 subscriber",
             "type": "shell",
             "command": "${workspaceFolder}/scripts/run_ros2_subscriber.sh",
-            "presentation": {
-                "reveal": "always",
-                "panel": "new"
-            },
+            "presentation": { "reveal": "always", "panel": "new" },
             "problemMatcher": []
+        },
+        {
+            "label": "M2: 1. Simulator (MuJoCo)",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_m2_simulator.sh",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
+        },
+        {
+            "label": "M2: 2. ROS2 bridge",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_m2_bridge.sh",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
+        },
+        {
+            "label": "M2: 3a. Input - constant (home pose)",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_m2_commands.sh constant",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
+        },
+        {
+            "label": "M2: 3b. Input - sine wave (signal builder)",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_m2_commands.sh sine",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
+        },
+        {
+            "label": "M2: 3c. Input - pick-and-place sequence (signal builder)",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_m2_commands.sh sequence",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
+        },
+        {
+            "label": "M2: 3d. Input - IK to a point",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_m2_commands.sh ik --xyz ${input:ikTarget}",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
+        },
+        {
+            "label": "M2: 4. Monitor end-effector position",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_m2_monitor.sh /ur5e/ee_position",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
+        },
+        {
+            "label": "M2: 4. Monitor joint states",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_m2_monitor.sh /ur5e/joint_states",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "ikTarget",
+            "type": "promptString",
+            "description": "World x y z in meters (e.g. conveyor: -0.2 0.6 0.55, pallet: 0.6 -0.15 0.45)",
+            "default": "-0.2 0.6 0.55"
         }
     ]
 }
