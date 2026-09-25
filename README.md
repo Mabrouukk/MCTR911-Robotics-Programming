@@ -32,6 +32,10 @@ MCTR/
 
 Later milestones (`Milestone 02`, `Milestone 03`, `Milestone 04`) will be added as their own top-level folders following the same pattern.
 
-## Environment setup
+## Run it
 
-See [docker/README.md](docker/README.md) for how to build and run the ROS2 + MuJoCo container.
+| Milestone | Command |
+|---|---|
+| 1 | `scripts/run_ms1.sh` |
+
+Details on the ROS2 (Docker) + MuJoCo (native) setup are in [docker/README.md](docker/README.md).
