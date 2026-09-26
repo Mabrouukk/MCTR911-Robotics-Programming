@@ -41,7 +41,7 @@ def inverse_kinematics(T, eps=1e-9):
     a2, a3 = A[1], A[2]
     solutions = []
 
-    # Wrist center (origin of frame 5), found by stepping back d6 along the tool z-axis
+
     p05 = T[:3, 3] - d6 * T[:3, 2]
     r = np.hypot(p05[0], p05[1])
     if r < abs(d4):
@@ -60,14 +60,13 @@ def inverse_kinematics(T, eps=1e-9):
         for q5 in (acos5, -acos5):
             s5 = np.sin(q5)
             if abs(s5) < eps:
-                q6 = 0.0  # wrist singularity: q4 and q6 are coupled, pick q6 = 0
+                q6 = 0.0 
             else:
                 q6 = np.arctan2(
                     (-T[0, 1] * s1 + T[1, 1] * c1) / s5,
                     (T[0, 0] * s1 - T[1, 0] * c1) / s5,
                 )
 
-            # Remove joints 1, 5, 6 to leave the planar 3-link chain (joints 2, 3, 4)
             T01 = dh_transform(q1, D[0], A[0], ALPHA[0])
             T45 = dh_transform(q5, D[4], A[4], ALPHA[4])
             T56 = dh_transform(q6, D[5], A[5], ALPHA[5])
