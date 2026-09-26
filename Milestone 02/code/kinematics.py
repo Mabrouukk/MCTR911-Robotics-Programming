@@ -1,14 +1,11 @@
 import numpy as np
 
-# Where the robot base sits in the world (on top of the 0.4 m pedestal in environment.xml).
-# FK/IK below work in the robot base frame; add this to get world coordinates.
 ROBOT_BASE_POS = np.array([0.0, 0.0, 0.4])
 
-# Standard UR5e "ready" pose (elbow up, tool pointing down), in radians
+
 HOME_Q = np.array([-np.pi / 2, -np.pi / 2, np.pi / 2, -np.pi / 2, -np.pi / 2, 0.0])
 
-# Standard DH parameters of the UR5e, taken from the mujoco_menagerie model geometry.
-# Official UR5e values: d1=0.1625, a2=-0.425, a3=-0.3922, d4=0.1333, d5=0.0997, d6=0.0996
+
 D = np.array([0.163, 0.0, 0.0, 0.134, 0.1, 0.1])
 A = np.array([0.0, -0.425, -0.392, 0.0, 0.0, 0.0])
 ALPHA = np.array([np.pi / 2, 0.0, 0.0, np.pi / 2, -np.pi / 2, 0.0])
