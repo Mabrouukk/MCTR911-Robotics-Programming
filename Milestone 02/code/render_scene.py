@@ -1,18 +1,18 @@
 import os
 
 import matplotlib
-matplotlib.use("Agg")
+matplotlib.use("Agg") #draw fel memory agg w matfta7sh ay window
 import matplotlib.pyplot as plt
 import mujoco
 import numpy as np
 
-from kinematics import HOME_Q
-from sim_bridge import ARM_ACTUATORS, ARM_JOINTS, CAD, build_model
+from kinematics import HOME_Q # el zawaya el hanbd2 beha 
+from sim_bridge import ARM_ACTUATORS, ARM_JOINTS, CAD, build_model # benakhod meno el model el 3amaly w el CAD files 
 
 FIGURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "report", "figures")
 WIDTH, HEIGHT = 1600, 1000
 
-
+# el fanction deh bt render el scene w t save el image fe el path elly enta 3ayzo w bta5od el model w data w filename w lookat w distance w azimuth w elevation w show_frames
 def render(model, data, filename, lookat, distance, azimuth, elevation, show_frames=False):
     camera = mujoco.MjvCamera()
     camera.lookat[:] = lookat
@@ -21,7 +21,7 @@ def render(model, data, filename, lookat, distance, azimuth, elevation, show_fra
     camera.elevation = elevation
     options = mujoco.MjvOption()
     if show_frames:
-        options.frame = mujoco.mjtFrame.mjFRAME_BODY
+        options.frame = mujoco.mjtFrame.mjFRAME_BODY # mujoco frames ahmar akhdar azra2
     with mujoco.Renderer(model, HEIGHT, WIDTH) as renderer:
         renderer.update_scene(data, camera, options)
         image = renderer.render()
