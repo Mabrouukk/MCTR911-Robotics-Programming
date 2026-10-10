@@ -2,7 +2,7 @@ Robotics Programming Project TEAM 5
 
 **Robot:** Universal Robots UR5e (6-DOF industrial manipulator)
 **Gripper:** Robotiq 2F-85 (attached at the UR5e's wrist)
-**Application:** Pick-and-place / palletizing on a conveyor line
+**Application:** Colour sorting: the UR5e picks mixed red/green/blue parts off a conveyor and drops each one into the bin of its colour
 **Tools:** ROS2 (Humble), MuJoCo, Python, Docker
 
 ## Team
@@ -27,20 +27,20 @@ MCTR/
 │   ├── cad_models/          # UR5e + Robotiq 2F-85 MJCF models (from mujoco_menagerie)
 │   └── videos/              # demo videos of ROS2 + MuJoCo running
 ├── Milestone 02/
-│   ├── code/                # DH kinematics, ROS2-MuJoCo bridge, input modes, work cell scene
+│   ├── code/                # DH kinematics, ROS2-MuJoCo bridge, input modes, colour sorting cell
 │   ├── report/              # Milestone 2 report + figures
 │   └── videos/              # simulation + GUI videos
 ├── docker/                  # ROS2 + MuJoCo containerized environment
 └── README.md
 ```
 
-Later milestones (`Milestone 02`, `Milestone 03`, `Milestone 04`) will be added as their own top-level folders following the same pattern.
+Later milestones (`Milestone 03`, `Milestone 04`) will be added as their own top-level folders following the same pattern.
 
 ## Run it
 
 | Milestone | Command |
 |---|---|
 | 1 | `scripts/run_ms1.sh` |
-| 2 | `scripts/run_ms2.sh` (optionally `sine`, `constant`, `sliders`, or `ik --xyz X Y Z`) |
+| 2 | `scripts/run_ms2.sh` runs the colour sorting cell (optionally `sine`, `constant`, `sliders`, or `ik --xyz X Y Z`) |
 
 Details on the ROS2 (Docker) + MuJoCo (native) setup are in [docker/README.md](docker/README.md).
