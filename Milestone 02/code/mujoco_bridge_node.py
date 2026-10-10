@@ -7,7 +7,7 @@ import rclpy
 from geometry_msgs.msg import PointStamped
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import Float64MultiArray, String
 
 SIM_HOST = "host.docker.internal"
 SIM_PORT = 9999
@@ -23,6 +23,7 @@ class MujocoBridgeNode(Node):
     /ur5e/joint_commands (Float64MultiArray: 6 joint angles [rad], optional 7th = gripper 0-255)
         -> forwarded to the simulator
     simulator state -> /ur5e/joint_states (JointState) and /ur5e/ee_position (PointStamped, world frame)
+    colour sensor at the pick station -> /cell/station_color (String: "red", "green", "blue" or "" when empty)
     """
 
     def __init__(self):
@@ -31,6 +32,7 @@ class MujocoBridgeNode(Node):
         self._sock_lock = threading.Lock()
         self._state_pub = self.create_publisher(JointState, "/ur5e/joint_states", 10)
         self._ee_pub = self.create_publisher(PointStamped, "/ur5e/ee_position", 10)
+        self._color_pub = self.create_publisher(String, "/cell/station_color", 10)
         self.create_subscription(Float64MultiArray, "/ur5e/joint_commands", self._on_command, 10)
         threading.Thread(target=self._read_loop, daemon=True).start()
 
@@ -93,6 +95,8 @@ class MujocoBridgeNode(Node):
         ee.point.x, ee.point.y, ee.point.z = state["ee"]
         self._ee_pub.publish(ee)
 
+        self._color_pub.publish(String(data=state.get("station", "")))
+
 
 def main():
     rclpy.init()
@@ -103,7 +107,8 @@ def main():
         pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == "__main__":

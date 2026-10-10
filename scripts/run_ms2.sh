@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Milestone 2 in one command: MuJoCo simulator + ROS2 bridge + one joint input.
 #
-#   scripts/run_ms2.sh                      pick-and-place step sequence (default)
+#   scripts/run_ms2.sh                      colour sorting: conveyor parts into their colour bins (default)
 #   scripts/run_ms2.sh sine                 sine wave on every joint
 #   scripts/run_ms2.sh constant             hold the home pose (or: constant --deg q1 q2 q3 q4 q5 q6)
 #   scripts/run_ms2.sh ik --xyz X Y Z       move the gripper flange to a world point
@@ -14,7 +14,7 @@ CODE="Milestone 02/code"
 CONTAINER=mctr911_ms2
 SIM_PID=""
 LOGS_PID=""
-[ $# -eq 0 ] && set -- sequence
+[ $# -eq 0 ] && set -- sort
 
 cleanup() {
     trap - EXIT INT TERM
@@ -43,7 +43,7 @@ if [ ! -d .venv ]; then
     .venv/bin/pip install --quiet mujoco numpy
 fi
 
-echo "[1/3] Opening the MuJoCo simulator (UR5e + gripper + work cell)"
+echo "[1/3] Opening the MuJoCo simulator (UR5e + gripper + colour sorting cell)"
 PYTHONUNBUFFERED=1 .venv/bin/mjpython "$CODE/sim_bridge.py" > >(sed -l 's/^/[simulator] /') 2>&1 &
 SIM_PID=$!
 disown

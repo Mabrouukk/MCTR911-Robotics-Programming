@@ -1,14 +1,26 @@
-<mujoco model="pick_and_place_cell">
+<mujoco model="color_sorting_cell">
   <asset>
     <material name="steel" rgba="0.55 0.57 0.6 1"/>
     <material name="dark_steel" rgba="0.2 0.22 0.25 1"/>
     <material name="belt" rgba="0.08 0.08 0.08 1"/>
-    <material name="wood" rgba="0.62 0.46 0.26 1"/>
     <material name="safety_yellow" rgba="0.95 0.8 0.1 1"/>
+    <material name="sensor_lens" rgba="0.9 0.9 1 1" emission="0.6"/>
     <material name="part_red" rgba="0.85 0.15 0.15 1"/>
-    <material name="part_blue" rgba="0.15 0.35 0.85 1"/>
     <material name="part_green" rgba="0.15 0.7 0.25 1"/>
+    <material name="part_blue" rgba="0.15 0.35 0.85 1"/>
+    <material name="bin_red" rgba="0.6 0.15 0.15 1"/>
+    <material name="bin_green" rgba="0.15 0.5 0.2 1"/>
+    <material name="bin_blue" rgba="0.15 0.25 0.6 1"/>
   </asset>
+
+  <default>
+    <default class="bin_wall">
+      <geom type="box"/>
+    </default>
+    <default class="decor">
+      <geom contype="0" conaffinity="0"/>
+    </default>
+  </default>
 
   <worldbody>
     <body name="pedestal">
@@ -16,43 +28,82 @@
       <geom type="box" pos="0 0 0.01" size="0.2 0.2 0.01" material="steel"/>
     </body>
 
+    <!-- Accumulating conveyor: parts travel in +x and queue against the end stop at the pick station.
+         The belt itself is static; sim_bridge.py drives the parts that rest on it. -->
     <body name="conveyor">
-      <geom name="belt" type="box" pos="0 0.6 0.28" size="0.9 0.15 0.02" material="belt"/>
-      <geom type="box" pos="0 0.44 0.31" size="0.9 0.01 0.03" material="steel"/>
-      <geom type="box" pos="0 0.76 0.31" size="0.9 0.01 0.03" material="steel"/>
-      <geom type="cylinder" pos="0.9 0.6 0.28" euler="1.5708 0 0" size="0.03 0.15" material="steel"/>
-      <geom type="cylinder" pos="-0.9 0.6 0.28" euler="1.5708 0 0" size="0.03 0.15" material="steel"/>
-      <geom type="box" pos="0.8 0.48 0.13" size="0.025 0.025 0.13" material="steel"/>
-      <geom type="box" pos="0.8 0.72 0.13" size="0.025 0.025 0.13" material="steel"/>
-      <geom type="box" pos="-0.8 0.48 0.13" size="0.025 0.025 0.13" material="steel"/>
-      <geom type="box" pos="-0.8 0.72 0.13" size="0.025 0.025 0.13" material="steel"/>
+      <geom name="belt" type="box" pos="-0.45 0.6 0.28" size="0.6 0.15 0.02" material="belt"/>
+      <geom type="box" pos="-0.45 0.44 0.31" size="0.6 0.01 0.03" material="steel"/>
+      <geom type="box" pos="-0.45 0.76 0.31" size="0.6 0.01 0.03" material="steel"/>
+      <geom type="cylinder" pos="-1.05 0.6 0.28" zaxis="0 1 0" size="0.02 0.16" material="steel"/>
+      <geom type="cylinder" pos="0.15 0.6 0.28" zaxis="0 1 0" size="0.02 0.16" material="steel"/>
+      <geom name="end_stop" type="box" pos="0.14 0.6 0.33" size="0.01 0.15 0.03" material="safety_yellow"/>
+      <geom type="box" pos="-0.95 0.48 0.13" size="0.025 0.025 0.13" material="steel"/>
+      <geom type="box" pos="-0.95 0.72 0.13" size="0.025 0.025 0.13" material="steel"/>
+      <geom type="box" pos="0.05 0.48 0.13" size="0.025 0.025 0.13" material="steel"/>
+      <geom type="box" pos="0.05 0.72 0.13" size="0.025 0.025 0.13" material="steel"/>
     </body>
 
-    <body name="pallet">
-      <geom type="box" pos="0.6 -0.15 0.12" size="0.25 0.2 0.015" material="wood"/>
-      <geom type="box" pos="0.4 -0.15 0.05" size="0.03 0.2 0.055" material="wood"/>
-      <geom type="box" pos="0.6 -0.15 0.05" size="0.03 0.2 0.055" material="wood"/>
-      <geom type="box" pos="0.8 -0.15 0.05" size="0.03 0.2 0.055" material="wood"/>
+    <!-- Colour sensor looking across the belt at the pick station. -->
+    <body name="color_sensor" childclass="decor">
+      <geom type="box" pos="0.105 0.8 0.18" size="0.01 0.01 0.18" material="steel"/>
+      <geom type="box" pos="0.105 0.79 0.36" size="0.025 0.02 0.02" material="dark_steel"/>
+      <geom type="cylinder" pos="0.105 0.77 0.36" zaxis="0 1 0" size="0.008 0.002" material="sensor_lens"/>
     </body>
 
-    <body name="floor_markings">
-      <geom type="box" pos="0 1.0 0.001" size="1.2 0.02 0.001" material="safety_yellow" contype="0" conaffinity="0"/>
-      <geom type="box" pos="0 -0.6 0.001" size="1.2 0.02 0.001" material="safety_yellow" contype="0" conaffinity="0"/>
-      <geom type="box" pos="1.2 0.2 0.001" size="0.02 0.8 0.001" material="safety_yellow" contype="0" conaffinity="0"/>
-      <geom type="box" pos="-1.2 0.2 0.001" size="0.02 0.8 0.001" material="safety_yellow" contype="0" conaffinity="0"/>
+    <!-- One bin per colour, open at the top. -->
+    <body name="bin_red" pos="0.55 0.25 0" childclass="bin_wall">
+      <geom pos="0 0 0.01" size="0.12 0.12 0.01" material="bin_red"/>
+      <geom pos="0.115 0 0.125" size="0.005 0.12 0.125" material="bin_red"/>
+      <geom pos="-0.115 0 0.125" size="0.005 0.12 0.125" material="bin_red"/>
+      <geom pos="0 0.115 0.125" size="0.11 0.005 0.125" material="bin_red"/>
+      <geom pos="0 -0.115 0.125" size="0.11 0.005 0.125" material="bin_red"/>
+    </body>
+    <body name="bin_green" pos="0.55 -0.05 0" childclass="bin_wall">
+      <geom pos="0 0 0.01" size="0.12 0.12 0.01" material="bin_green"/>
+      <geom pos="0.115 0 0.125" size="0.005 0.12 0.125" material="bin_green"/>
+      <geom pos="-0.115 0 0.125" size="0.005 0.12 0.125" material="bin_green"/>
+      <geom pos="0 0.115 0.125" size="0.11 0.005 0.125" material="bin_green"/>
+      <geom pos="0 -0.115 0.125" size="0.11 0.005 0.125" material="bin_green"/>
+    </body>
+    <body name="bin_blue" pos="0.55 -0.35 0" childclass="bin_wall">
+      <geom pos="0 0 0.01" size="0.12 0.12 0.01" material="bin_blue"/>
+      <geom pos="0.115 0 0.125" size="0.005 0.12 0.125" material="bin_blue"/>
+      <geom pos="-0.115 0 0.125" size="0.005 0.12 0.125" material="bin_blue"/>
+      <geom pos="0 0.115 0.125" size="0.11 0.005 0.125" material="bin_blue"/>
+      <geom pos="0 -0.115 0.125" size="0.11 0.005 0.125" material="bin_blue"/>
     </body>
 
-    <body name="part_1" pos="-0.7 0.6 0.345">
-      <freejoint/>
-      <geom type="box" size="0.04 0.04 0.04" mass="0.2" material="part_red"/>
+    <body name="floor_markings" childclass="decor">
+      <geom type="box" pos="-0.15 0.95 0.001" size="1.05 0.02 0.001" material="safety_yellow"/>
+      <geom type="box" pos="-0.15 -0.6 0.001" size="1.05 0.02 0.001" material="safety_yellow"/>
+      <geom type="box" pos="0.9 0.175 0.001" size="0.02 0.795 0.001" material="safety_yellow"/>
+      <geom type="box" pos="-1.2 0.175 0.001" size="0.02 0.795 0.001" material="safety_yellow"/>
     </body>
-    <body name="part_2" pos="-0.45 0.6 0.345">
+
+    <!-- 5 cm parts in mixed colour order; the first one reaches the pick station after a few seconds. -->
+    <body name="part_1" pos="-0.25 0.6 0.326">
       <freejoint/>
-      <geom type="box" size="0.04 0.04 0.04" mass="0.2" material="part_blue"/>
+      <geom type="box" size="0.025 0.025 0.025" mass="0.1" material="part_red"/>
     </body>
-    <body name="part_3" pos="-0.2 0.6 0.345">
+    <body name="part_2" pos="-0.4 0.6 0.326">
       <freejoint/>
-      <geom type="box" size="0.04 0.04 0.04" mass="0.2" material="part_green"/>
+      <geom type="box" size="0.025 0.025 0.025" mass="0.1" material="part_blue"/>
+    </body>
+    <body name="part_3" pos="-0.55 0.6 0.326">
+      <freejoint/>
+      <geom type="box" size="0.025 0.025 0.025" mass="0.1" material="part_green"/>
+    </body>
+    <body name="part_4" pos="-0.7 0.6 0.326">
+      <freejoint/>
+      <geom type="box" size="0.025 0.025 0.025" mass="0.1" material="part_blue"/>
+    </body>
+    <body name="part_5" pos="-0.85 0.6 0.326">
+      <freejoint/>
+      <geom type="box" size="0.025 0.025 0.025" mass="0.1" material="part_green"/>
+    </body>
+    <body name="part_6" pos="-1.0 0.6 0.326">
+      <freejoint/>
+      <geom type="box" size="0.025 0.025 0.025" mass="0.1" material="part_red"/>
     </body>
   </worldbody>
 </mujoco>

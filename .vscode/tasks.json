@@ -28,14 +28,14 @@
             "id": "ms2Mode",
             "type": "pickString",
             "description": "Which input should drive the joints?",
-            "options": ["sequence", "sine", "constant", "sliders"],
-            "default": "sequence"
+            "options": ["sort", "sine", "constant", "sliders"],
+            "default": "sort"
         },
         {
             "id": "ikTarget",
             "type": "promptString",
-            "description": "World x y z in meters (conveyor: -0.2 0.6 0.55, pallet: 0.6 -0.15 0.45)",
-            "default": "-0.2 0.6 0.55"
+            "description": "World x y z in meters (pick station: 0.105 0.6 0.6, red bin: 0.55 0.25 0.6)",
+            "default": "0.105 0.6 0.6"
         }
     ]
 }

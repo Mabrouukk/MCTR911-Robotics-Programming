@@ -7,7 +7,8 @@ import mujoco
 import numpy as np
 
 from kinematics import HOME_Q # el zawaya el hanbd2 beha 
-from sim_bridge import ARM_ACTUATORS, ARM_JOINTS, CAD, build_model # benakhod meno el model el 3amaly w el CAD files 
+from sim_bridge import ARM_ACTUATORS, ARM_JOINTS, CAD, GRIPPER_ACTUATOR, Conveyor, build_model # benakhod meno el model el 3amaly w el CAD files 
+from sorting_task import SortingController # el robot by-sort el parts 3ala 7asab el loon
 
 FIGURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "report", "figures")
 WIDTH, HEIGHT = 1600, 1000
@@ -35,13 +36,26 @@ def main():
     model.vis.global_.offwidth = WIDTH
     model.vis.global_.offheight = HEIGHT
     data = mujoco.MjData(model)
+    arm_act = [model.actuator(a).id for a in ARM_ACTUATORS]
+    grip_act = model.actuator(GRIPPER_ACTUATOR).id
     data.qpos[[model.joint(j).qposadr[0] for j in ARM_JOINTS]] = HOME_Q
-    data.ctrl[[model.actuator(a).id for a in ARM_ACTUATORS]] = HOME_Q
-    for _ in range(500):
-        mujoco.mj_step(model, data)
+    data.ctrl[arm_act] = HOME_Q
+    conveyor = Conveyor(model)
+    sorter = SortingController(HOME_Q)
+
+    # nshaghal el cell: el conveyor by7arak el parts w el robot by-sort, w nsawar marteen
+    def run_until(t_end):
+        while data.time < t_end:
+            if round(data.time / model.opt.timestep) % 10 == 0:  # commands at 50 Hz, like the ROS2 publisher
+                data.ctrl[arm_act], data.ctrl[grip_act], _ = sorter.update(data.time, conveyor.station_color(data))
+            conveyor.step(data)
+            mujoco.mj_step(model, data)
 
     os.makedirs(FIGURES, exist_ok=True)
-    render(model, data, "environment.png", lookat=(0.0, 0.2, 0.35), distance=2.6, azimuth=-130, elevation=-25)
+    run_until(5.5)  # first part reached the station, the rest still on their way
+    render(model, data, "environment.png", lookat=(-0.1, 0.2, 0.3), distance=2.7, azimuth=-125, elevation=-28)
+    run_until(13.0)  # carrying the red part over to the red bin
+    render(model, data, "sorting_in_action.png", lookat=(0.3, 0.25, 0.35), distance=1.9, azimuth=-150, elevation=-25)
 
     arm = mujoco.MjModel.from_xml_path(os.path.join(CAD, "ur5e", "scene.xml"))
     arm.vis.global_.offwidth = WIDTH
