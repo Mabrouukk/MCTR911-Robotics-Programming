@@ -2,32 +2,32 @@ import numpy as np
 
 ROBOT_BASE_POS = np.array([0.0, 0.0, 0.4])
 
-
+# EL INDEXES HENA BASE SHOULDER ELBOW WRIST1 WRIST2 WRIST3
 HOME_Q = np.array([-np.pi / 2, -np.pi / 2, np.pi / 2, -np.pi / 2, -np.pi / 2, 0.0])
 
+# DOL HEBTOHOM MEN EL DATA SHEET ELLY FE EL UR5E MANUAL ZAY MA2ASATO KDA ( MA2ASAT GESM EL ROBOT W EL JOINTS W EL MASAFA BEN EL JOINTS WEL TANYA)
+D = np.array([0.163, 0.0, 0.0, 0.134, 0.1, 0.1]) #MASAFA MEN FO2 AW EL GANB 
+A = np.array([0.0, -0.425, -0.392, 0.0, 0.0, 0.0]) #EL MASAFA BEN EL JOINTS WEL TANYA 
+ALPHA = np.array([np.pi / 2, 0.0, 0.0, np.pi / 2, -np.pi / 2, 0.0]) # EL JOINT EL GAY LAFEF AD EH 3AN EL ABLO YAANY LW MASLN 0 YEB2A PARALLEL
 
-D = np.array([0.163, 0.0, 0.0, 0.134, 0.1, 0.1])
-A = np.array([0.0, -0.425, -0.392, 0.0, 0.0, 0.0])
-ALPHA = np.array([np.pi / 2, 0.0, 0.0, np.pi / 2, -np.pi / 2, 0.0])
 
-
-def dh_transform(theta, d, a, alpha):
-    ct, st = np.cos(theta), np.sin(theta)
-    ca, sa = np.cos(alpha), np.sin(alpha)
+def dh_transform(theta, d, a, alpha): #law el aplha be 0 yeb2a parallel lw el alpha be 90 yeb2a perpindicular
+    ct, st = np.cos(theta), np.sin(theta)#benlef hawlen el z, de betetghayr zay kda lama tefth bab ala mafsal el mafsal sabt da alpha enama el theta bttghyr 
+    ca, sa = np.cos(alpha), np.sin(alpha) #benlef hawlen el x de msh betetghyr bethaded mara wahda
     return np.array([
-        [ct, -st * ca, st * sa, a * ct],
+        [ct, -st * ca, st * sa, a * ct], # awel 3 columns rotation w akher column position
         [st, ct * ca, -ct * sa, a * st],
         [0.0, sa, ca, d],
         [0.0, 0.0, 0.0, 1.0],
     ])
 
-
+#function el forward kinematics betedeha el information beta3et el joints w el angles we heya t2olak el gripper feen dlwa2ty law enta f3lan fel positions de aw hata hagat enta betfkr feha w 3ayz teshif el gripper haykoun feen?
 def forward_kinematics(q, return_all=False):
-    T = np.eye(4)
-    frames = [T.copy()]
-    for i in range(6):
-        T = T @ dh_transform(q[i], D[i], A[i], ALPHA[i])
-        frames.append(T.copy())
+    T = np.eye(4) #e3mel identity matrix 4x4 (1000,0100,0010,0001) ka2ny ba2ol ana wa2ef and eel base w lsa mathrktsh w mengher ay rotation
+    frames = [T.copy()] #hena ehna bensave el frames elly 3amelna fehom rotation w translation 3ashan n3rf el position w orientation bta3 kol joint w initially be (base)
+    for i in range(6): #run el hwar da 6 marat 3ashan el robot 6 joints
+        T = T @ dh_transform(q[i], D[i], A[i], ALPHA[i]) # hanmshy step by step men awel el base lehad el gripper w kol marra han3ml el rotation w translation bta3 el joint da 3ashan n3rf el position w orientation bta3 el joint da
+        frames.append(T.copy()) # baad kol khatwa ekteb fe frames fa tege fel akher teb2a 3aref kol joint ba2a feen bzbt
     return frames if return_all else T
 
 
