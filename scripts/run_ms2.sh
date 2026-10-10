@@ -37,10 +37,12 @@ if ! docker image inspect mctr911-ros2-mujoco:latest >/dev/null 2>&1; then
     echo "Building the ROS2 + MuJoCo Docker image (first run only, takes a while)..."
     (cd docker && docker compose build)
 fi
-if [ ! -d .venv ]; then
-    echo "Setting up the Python environment (first run only)..."
+# A venv stops working if the project folder is moved or copied, so check it actually runs.
+if ! .venv/bin/mjpython -c "import mujoco" >/dev/null 2>&1; then
+    echo "Setting up the Python environment (first run, or the project folder moved)..."
+    rm -rf .venv
     python3 -m venv .venv
-    .venv/bin/pip install --quiet mujoco numpy
+    .venv/bin/pip install --quiet mujoco numpy matplotlib
 fi
 
 echo "[1/3] Opening the MuJoCo simulator (UR5e + gripper + colour sorting cell)"
