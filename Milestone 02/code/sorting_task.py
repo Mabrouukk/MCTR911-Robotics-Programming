@@ -72,13 +72,13 @@ class SortingController:
         self._color = None
 
     def update(self, t, seen_color):
-        started = None
+        started = None #hena batcheck law ana 3ande tasks wla laa ana shayef ay color wla laa and so on
         if self._steps is None:
-            if seen_color in BIN_XY:
+            if seen_color in BIN_XY: #bashoof el loon lw tel3 green and red aw blue bashtaghal tab lw laa yeb2a lsa 
                 self._color = seen_color
-                self._steps = sorting_cycle(seen_color, self.q)
-                self._from_q, self._step, self._step_t0 = self.q, 0, t
-                started = f"{seen_color} part detected -> {self._steps[0][0]}"
+                self._steps = sorting_cycle(seen_color, self.q)#e3mel el steps bta3et el color da w b3mlha save feh
+                self._from_q, self._step, self._step_t0 = self.q, 0, t #prepare
+                started = f"{seen_color} part detected -> {self._steps[0][0]}" #print el step elly 3amlt start
             else:
                 return self.q, self.gripper, None
 

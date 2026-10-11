@@ -46,7 +46,7 @@ class JointCommandPublisher(Node):
         self._station_color = msg.data #yaane bas betsave el loon msh aktar
 
     def _tick(self):
-        t = (self.get_clock().now() - self._t0).nanoseconds * 1e-9
+        t = (self.get_clock().now() - self._t0).nanoseconds * 1e-9 #3ada waat ad eh men sa3et ma 3amlna run lel function
         mode = self._args.mode
 
         if mode in ("constant", "ik"):
@@ -56,7 +56,7 @@ class JointCommandPublisher(Node):
             q = HOME_Q + self._amp * np.sin(w * t + self._phase)
             gripper = GRIPPER_CLOSED * 0.5 * (1 - np.cos(w * t))
         else:
-            q, gripper, event = self._sorter.update(t, self._station_color)
+            q, gripper, event = self._sorter.update(t, self._station_color) #hena ben call el method el esmha update bta3et el sorter w deh elly by7aded el zawaya elly 3ayz a7rko beha w el gripper w el event deh elly by2ol el step elly 3amlt start, men el akher bts2l a3mel eh dlwa2ty?
             if event:
                 self.get_logger().info(event)
 
