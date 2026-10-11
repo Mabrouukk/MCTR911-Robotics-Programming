@@ -22,7 +22,7 @@ def dh_transform(theta, d, a, alpha): #law el aplha be 0 yeb2a parallel lw el al
     ])
 
 #function el forward kinematics betedeha el information beta3et el joints w el angles we heya t2olak el gripper feen dlwa2ty law enta f3lan fel positions de aw hata hagat enta betfkr feha w 3ayz teshif el gripper haykoun feen?
-def forward_kinematics(q, return_all=False):
+def forward_kinematics(q, return_all=False):#el forward kinematics enta andak edges (zawaya) w 3ayz el makan law eltlo roh and xyz mengher ay info tanya da kda IK
     T = np.eye(4) #e3mel identity matrix 4x4 (1000,0100,0010,0001) ka2ny ba2ol ana wa2ef and eel base w lsa mathrktsh w mengher ay rotation
     frames = [T.copy()] #hena ehna bensave el frames elly 3amelna fehom rotation w translation 3ashan n3rf el position w orientation bta3 kol joint w initially be (base)
     for i in range(6): #run el hwar da 6 marat 3ashan el robot 6 joints
