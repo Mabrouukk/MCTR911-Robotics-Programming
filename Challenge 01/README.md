@@ -4,39 +4,47 @@ Forward and inverse position kinematics for the Franka Emika Panda (7 arm joints
 
 ```
 Challenge 01/
-├── panda_kinematics/            # ROS 2 ament_python package (copy into your ros2_ws/src)
+├── panda_kinematics/            # ROS 2 ament_python package (the deliverable)
 │   ├── panda_kinematics/kinematics.py   # DH table, FK, IK, ROS 2 node
 │   ├── setup.py                 # entry point: kinematics = panda_kinematics.kinematics:main
 │   └── package.xml
-├── model/panda.xml              # the exact panda.xml from mujoco_menagerie @ 71f066a (Apache-2.0)
+├── sim/
+│   ├── panda_sim.py             # MuJoCo simulator on the Mac (position-controlled Panda)
+│   └── panda_bridge_node.py     # ROS 2 bridge in Docker: /joint_commands -> simulator -> /joint_state
+├── model/                       # panda.xml, scene.xml, meshes from mujoco_menagerie @ 71f066a (Apache-2.0)
 └── verify/verify_kinematics.py  # checks FK and IK against MuJoCo, no ROS 2 needed
 ```
 
 ## Run it
 
-**1. Bridge in position mode** (in the course workspace, not this repo). In `example.py` and `mujoco_node.cpp` change `{"control_mode" : "VELOCITY"}` to `{"control_mode" : "POSITION"}`, then:
+```bash
+scripts/run_ch1.sh            # simulator + ROS 2 bridge + our kinematics node
+scripts/run_ch1.sh verify     # only the FK / IK checks against MuJoCo (about 30 s)
+```
+
+Or in VS Code: ⌘⇧P → "Tasks: Run Task" → **Run Challenge 1** → pick `run` or `verify`. Press Ctrl+C to stop everything.
+
+`run` does four things:
+
+1. Opens the MuJoCo viewer with the Panda at its `home` keyframe and a transparent RGB frame at `TARGET_POSE` (red = x, green = y, blue = z).
+2. Starts `panda_bridge_node.py` in Docker. It plays the course `mujoco_ros2` bridge in POSITION mode: same topics, and it only accepts commands of exactly 9 values.
+3. Builds `panda_kinematics` with `colcon` inside the container.
+4. Runs `ros2 run panda_kinematics kinematics`. The node solves IK once from the arm's current joints and publishes the solution. The arm moves onto the RGB frame, and the simulator prints the hand's distance from the target every 2 s (`0.00 mm, 0.00 deg` once it arrives).
+
+To try another target, change `TARGET_JOINTS` in `kinematics.py` and run it again; the script rebuilds the package every time.
+
+**Gravity.** The Panda's actuators in `panda.xml` are spring-damper position servos with no integral term, so gravity alone bends joint 2 by about 0.5°, which is about 8 mm at the hand. Our simulator turns on MuJoCo's gravity compensation, as the real Panda controller does, so the error you see is the IK's, not the controller's. On a bridge without gravity compensation, expect the hand to settle a few mm low even though the IK answer is exact. The node's log line `FK check: position error 0.003 mm` shows the IK itself is right.
+
+### On the course `mujoco_ros2` bridge
+
+In `example.py` and `mujoco_node.cpp` change `{"control_mode" : "VELOCITY"}` to `{"control_mode" : "POSITION"}`, then:
 
 ```bash
 colcon build --packages-select mujoco_ros2
-```
-
-**2. Build and run this package**
-
-```bash
 cp -r "Challenge 01/panda_kinematics" ~/ros2_ws/src/
 cd ~/ros2_ws && colcon build --packages-select panda_kinematics
 source install/setup.bash
 ros2 run panda_kinematics kinematics
-```
-
-The node waits for the first `/joint_state`, solves IK once for `TARGET_POSE`, logs the solution with an FK check of its error, and then publishes it on `/joint_commands` at 20 Hz as 9 floats: 7 joint targets, then `255.0, 0.0` for the gripper (closed).
-
-To change the target, edit `TARGET_JOINTS` in `kinematics.py`. `TARGET_POSE` is `forward_kinematics(TARGET_JOINTS)`, so it is reachable by construction.
-
-**3. Verify FK and IK against MuJoCo** (from the repo root, uses the project `.venv`):
-
-```bash
-.venv/bin/python "Challenge 01/verify/verify_kinematics.py"
 ```
 
 ## DH table (standard / Spong convention)

@@ -21,6 +21,13 @@
             "command": "${workspaceFolder}/scripts/run_ms2.sh ik --xyz ${input:ikTarget}",
             "presentation": { "reveal": "always", "panel": "new" },
             "problemMatcher": []
+        },
+        {
+            "label": "Run Challenge 1",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_ch1.sh ${input:ch1Mode}",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
         }
     ],
     "inputs": [
@@ -36,6 +43,13 @@
             "type": "promptString",
             "description": "World x y z in meters (pick station: 0.105 0.6 0.6, red bin: 0.55 0.25 0.6)",
             "default": "0.105 0.6 0.6"
+        },
+        {
+            "id": "ch1Mode",
+            "type": "pickString",
+            "description": "run = simulator + IK node, verify = FK/IK checks against MuJoCo only",
+            "options": ["run", "verify"],
+            "default": "run"
         }
     ]
 }

@@ -6,6 +6,7 @@ import numpy as np
 # (see Challenge 01/verify/verify_kinematics.py).
 try:
     import rclpy
+    from rclpy.executors import ExternalShutdownException
     from rclpy.node import Node
     from sensor_msgs.msg import JointState
     from std_msgs.msg import Float64MultiArray
@@ -387,9 +388,14 @@ class PandaKinematicsNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = PandaKinematicsNode()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(node)
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass  # Ctrl+C: stop quietly instead of printing a traceback
+    finally:
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == '__main__':
