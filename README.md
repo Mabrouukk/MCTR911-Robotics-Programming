@@ -30,6 +30,7 @@ MCTR/
 │   ├── code/                # DH kinematics, ROS2-MuJoCo bridge, input modes, colour sorting cell
 │   ├── report/              # Milestone 2 report + figures
 │   └── videos/              # simulation + GUI videos
+├── Challenge 01/            # Robotics Programming Challenge 1: Franka Panda FK + IK (ROS 2 package)
 ├── docker/                  # ROS2 + MuJoCo containerized environment
 └── README.md
 ```
