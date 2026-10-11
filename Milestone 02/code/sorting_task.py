@@ -84,7 +84,7 @@ class SortingController:
 
         label, target, gripper, duration = self._steps[self._step]
         s = min((t - self._step_t0) / duration, 1.0)
-        blend = 0.5 - 0.5 * np.cos(np.pi * s)  # smooth start and stop
+        blend = 0.5 - 0.5 * np.cos(np.pi * s)  #yemshe bera7a ba3deen ysr3 ba3deen yehady lama yege
         self.q = self._from_q + blend * (target - self._from_q)
         self.gripper = gripper
 
