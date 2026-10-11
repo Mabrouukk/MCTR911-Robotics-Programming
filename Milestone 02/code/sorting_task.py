@@ -9,7 +9,7 @@ GRIPPER_CLOSED = 255.0
 TOOL_DOWN = np.array([[0.0, 1.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, -1.0]])
 FLANGE_TO_PINCH = 0.156  # flange to the point between the gripper pads [m]
 
-STATION_XY = (0.105, 0.6)  # where parts stop against the conveyor's end stop
+STATION_XY = (0.105, 0.6)  # el makan el el object wa2f feh ala x,y
 PART_CENTER_Z = 0.325
 BIN_XY = {"red": (0.55, 0.25), "green": (0.55, -0.05), "blue": (0.55, -0.35)}
 
