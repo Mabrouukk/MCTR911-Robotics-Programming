@@ -6,9 +6,9 @@ import numpy as np
 # (see Challenge 01/verify/verify_kinematics.py).
 try:
     import rclpy
-    from rclpy.executors import ExternalShutdownException
+    from rclpy.executors import ExternalShutdownException #ben shut down 
     from rclpy.node import Node
-    from sensor_msgs.msg import JointState
+    from sensor_msgs.msg import JointState # messege 34an n3rf el joint state bta3 el robot
     from std_msgs.msg import Float64MultiArray
 except ImportError:
     rclpy = None
@@ -51,11 +51,11 @@ In the setup.py, change the entry point to include this file's name without the 
 #
 # No theta offsets are needed: at q = 0 every DH frame lines up with its MuJoCo body.
 DH_PARAMS = [
-    [-np.pi / 2,  0.0,    0.333],  # link 1
-    [ np.pi / 2,  0.0,    0.0  ],  # link 2
-    [ np.pi / 2,  0.0825, 0.316],  # link 3
-    [-np.pi / 2, -0.0825, 0.0  ],  # link 4
-    [ np.pi / 2,  0.0,    0.384],  # link 5
+    [-np.pi / 2,  0.0,    0.333],  # link 1 shoulder # kol row le kol joint andena 7 rows 7 joints , kol row (alpha,a,d)
+    [ np.pi / 2,  0.0,    0.0  ],  # link 2 joints 2 # el alpha el joint el baady twisted ad eh ala x 
+    [ np.pi / 2,  0.0825, 0.316],  # link 3 # el x heya el sideway distance along x axis, d heya el distance along z axis
+    [-np.pi / 2, -0.0825, 0.0  ],  # link 4 # tab leh mafish hena theta 34an el theta betetghayar de el change el robot bylfo (q) w dah bytghy kol ma el robot yethrk fa el table de bas el hagat el sabta 
+    [ np.pi / 2,  0.0,    0.384],  # link 5 # el distances de kolaha meters
     [ np.pi / 2,  0.088,  0.0  ],  # link 6
     [ 0.0,        0.0,    0.0  ],  # link 7
 ]
