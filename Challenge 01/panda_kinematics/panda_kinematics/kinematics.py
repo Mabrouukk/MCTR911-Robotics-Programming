@@ -66,7 +66,7 @@ DH_PARAMS = [
 # <body name="hand" pos="0 0 0.107" quat="0.9238795 0 0 -0.3826834">
 # quat = (cos(t/2), 0, 0, sin(t/2)) with t = -45 deg, a pure rotation about z.
 _c, _s = np.cos(-np.pi / 4), np.sin(-np.pi / 4)
-T_L7_HAND = np.array([
+T_L7_HAND = np.array([ #awel talata columns dol rotation matrix, el 4th column de translation vector
     [_c,  -_s,  0.0, 0.0  ],
     [_s,   _c,  0.0, 0.0  ],
     [0.0,  0.0, 1.0, 0.107],
@@ -88,12 +88,12 @@ Q_MAX = np.array([ 2.8973,  1.7628,  2.8973, -0.0698,  2.8973,  3.7525,  2.8973]
 # front of the robot, above the table and pointing down. TARGET_POSE is set to
 # forward_kinematics(TARGET_JOINTS) right after the functions below, so the
 # target is reachable by construction.
-TARGET_JOINTS = np.array([0.5, 0.3, -0.2, -2.0, 0.1, 2.3, 0.4])
-TARGET_POSE = None
+TARGET_JOINTS = np.array([0.5, 0.3, -0.2, -2.0, 0.1, 2.3, 0.4]) # de el angles bta3t el joints el hadeha lel forward kinematics 3shan ygeb el pose bta3t el hand we el FK btrg3 ek oriantation
+TARGET_POSE = None #DE el hayb2a feha el xyz towards el haga el ana 3ayz awslha S
 
 # The 'home' keyframe from panda.xml. Used as a fallback IK seed.
 Q_HOME = np.array([0.0, 0.0, 0.0, -1.57079, 0.0, 1.57079, -0.7853])
-
+#law ayez degrees np.degrees(TARGET_JOINTS)
 # Upper bound on how far the hand origin can be from the shoulder (where
 # joints 1 and 2 meet, 0.333 above link0). Triangle inequality over the three
 # rigid segments shoulder->elbow, elbow->wrist, wrist->hand:
