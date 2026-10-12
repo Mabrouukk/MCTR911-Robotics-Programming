@@ -88,7 +88,7 @@ Q_MAX = np.array([ 2.8973,  1.7628,  2.8973, -0.0698,  2.8973,  3.7525,  2.8973]
 # front of the robot, above the table and pointing down. TARGET_POSE is set to
 # forward_kinematics(TARGET_JOINTS) right after the functions below, so the
 # target is reachable by construction.
-TARGET_JOINTS = np.array([0.5, 0.3, -0.2, -2.0, 0.1, 2.3, 0.4]) # de el angles bta3t el joints el hadeha lel forward kinematics 3shan ygeb el pose bta3t el hand we el FK btrg3 ek oriantation
+TARGET_JOINTS = np.array([0.5, 0.3, -0.2, -2.0, 0.1, 2.3, 0.4]) # de el angles bta3t el joints el 3adeha lel forward kinematics 3shan ygeb el pose bta3t el hand we el FK btrg3 ek oriantation
 TARGET_POSE = None #DE el hayb2a feha el xyz towards el haga el ana 3ayz awslha S
 
 # The 'home' keyframe from panda.xml. Used as a fallback IK seed.
@@ -102,14 +102,14 @@ Q_HOME = np.array([0.0, 0.0, 0.0, -1.57079, 0.0, 1.57079, -0.7853])
 # bound it never rejects a reachable target.
 SHOULDER = np.array([0.0, 0.0, 0.333])
 MAX_REACH = np.hypot(0.0825, 0.316) + np.hypot(0.0825, 0.384) + np.hypot(0.088, 0.107)
-
+#hasbtsha ezay men el shoulder lel elbow, elbow lel wrist, wrist lel hand, kol segment de 2D distance between the two points (x,y) fa el total distance de 3D distance between shoulder and hand
 # IK settings.
-IK_POS_TOL = 1e-4        # 0.1 mm
-IK_ROT_TOL = 1e-3        # ~0.06 deg
-IK_MAX_ITER = 200        # per seed
-IK_MAX_STEP = 0.2        # rad, largest joint change allowed per iteration
+IK_POS_TOL = 1e-4        # 0.1 mm lama hawsl lel difference da ana kda yo3tabar weslt lel target 
+IK_ROT_TOL = 1e-3        # nafs el kalam hena lel twisting lw and 0.06 degrees yeb2a ana tamam
+IK_MAX_ITER = 200        # maximum numbers of loops lw mwsltsh stop lel guess el wahda
+IK_MAX_STEP = 0.2        # akbar change el joint by3mlo fel nudge el wahda
 IK_LAMBDA_BAR = 1e-4     # damping floor, keeps J^T J + lambda I invertible at singularities
-IK_N_RANDOM_SEEDS = 10   # extra restarts if the given seed fails
+IK_N_RANDOM_SEEDS = 10   # mafrood abd2 men el HOME_Q tab lw fashalt garab 10 different PLaces
 
 
 def dh_transform(alpha, a, d, theta):
@@ -124,18 +124,18 @@ def dh_transform(alpha, a, d, theta):
     Returns a 4x4 numpy array.
     """
     ct, st = np.cos(theta), np.sin(theta)
-    ca, sa = np.cos(alpha), np.sin(alpha)
-    return np.array([
+    ca, sa = np.cos(alpha), np.sin(alpha) #hena ba calculate el sine wel cos 34an lw ehtagthom baaden
+    return np.array([ #3al x twist w 3al z joint turn
         [ct, -st * ca,  st * sa, a * ct],
         [st,  ct * ca, -ct * sa, a * st],
         [0.0,      sa,       ca,      d],
         [0.0,     0.0,      0.0,    1.0],
-    ])
+    ]) #el metrics sabta bas benedeha a d alpha theta mokhtalfeen tedek xyz w oriantation bas lazem tedeha el haga el ableek lw kolo multiply baa3do da el forward kinematics
 
 
 def _fk_frames(q):
     """Frames 0..7 in link0 (frame 0 is the base), plus the hand frame."""
-    T = np.eye(4)
+    T = np.eye(4) #hena ana baamel identity metrix (no rotation no metrics nothing)
     frames = [T]
     for (alpha, a, d), theta in zip(DH_PARAMS, q):
         T = T @ dh_transform(alpha, a, d, theta)
@@ -143,7 +143,7 @@ def _fk_frames(q):
     return frames, T @ T_L7_HAND
 
 
-def forward_kinematics(q):
+def forward_kinematics(q): #just calling el _fk_frames bel q bta3tna
     """
     Forward kinematics for the Panda arm.
 
@@ -155,7 +155,7 @@ def forward_kinematics(q):
     return _fk_frames(np.asarray(q, dtype=float))[1]
 
 
-def jacobian(q):
+def jacobian(q): #el function el hat2oly rl hand hatb2a feen lw 3mlt hagat mo3ayana 6 rows × 7 columns:
     """
     6x7 geometric Jacobian of the hand frame in link0, rows [v; w].
 
@@ -165,16 +165,16 @@ def jacobian(q):
     """
     frames, T_hand = _fk_frames(q)
     p = T_hand[:3, 3]
-    J = np.zeros((6, 7))
-    for i in range(7):
-        z = frames[i][:3, 2]
+    J = np.zeros((6, 7)) #kol column howa 1 joint
+    for i in range(7): #awel 3 rows movment of the hand position 
+        z = frames[i][:3, 2]#akher 3 rows homa el rotation bta3et el hand 
         o = frames[i][:3, 3]
-        J[:3, i] = np.cross(z, p - o)
-        J[3:, i] = z
-    return J, T_hand
+        J[:3, i] = np.cross(z, p - o) #hena bzbt ana bahzeb el hand hatb2a feen related to the joints movement
+        J[3:, i] = z #el z hya el direction bta3t el joint wel o el joint feen p heya el hand p-o el arrow men el joint lel hand 
+    return J, T_hand # el cross product tedek el arrow men el joint lel hand 
 
 
-def _rotation_error(R_target, R):
+def _rotation_error(R_target, R): # el function de heya el betehseb el error target_xyz-current_xyz
     """
     Axis-angle vector (in link0) that rotates R onto R_target.
 
@@ -296,7 +296,7 @@ def inverse_kinematics(target_pose, q0):
     q_ref = np.clip(np.asarray(q0, dtype=float)[:7], Q_MIN, Q_MAX)
 
     # Reachability, quick reject: further than the arm can possibly stretch.
-    if np.linalg.norm(target_pose[:3, 3] - SHOULDER) > MAX_REACH:
+    if np.linalg.norm(target_pose[:3, 3] - SHOULDER) > MAX_REACH: #law el distance atwal men longest arm stretch return not reachable
         return q_ref, False
 
     q, ok = _solve_from(target_pose, q_ref)
