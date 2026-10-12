@@ -1,4 +1,5 @@
 import json
+import os
 import socket
 import threading
 import time
@@ -9,7 +10,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64MultiArray, String
 
-SIM_HOST = "host.docker.internal"
+SIM_HOST = os.environ.get("SIM_HOST", "host.docker.internal")
 SIM_PORT = 9999
 JOINT_NAMES = [
     "shoulder_pan_joint", "shoulder_lift_joint", "elbow_joint",
