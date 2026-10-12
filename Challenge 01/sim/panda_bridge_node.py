@@ -8,6 +8,7 @@ panda_kinematics node runs unchanged against it:
   panda_sim.py joint positions                          -> /joint_state (JointState, 9 joints)
 """
 import json
+import os
 import socket
 import threading
 import time
@@ -17,7 +18,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64MultiArray
 
-SIM_HOST = "host.docker.internal"
+SIM_HOST = os.environ.get("SIM_HOST", "host.docker.internal")
 SIM_PORT = 9998
 CMD_SIZE = 9
 JOINT_NAMES = [f"joint{i}" for i in range(1, 8)] + ["finger_joint1", "finger_joint2"]
