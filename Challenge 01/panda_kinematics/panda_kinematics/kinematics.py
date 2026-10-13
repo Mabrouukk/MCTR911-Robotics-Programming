@@ -292,8 +292,8 @@ def inverse_kinematics(target_pose, q0):
     On failure the clamped seed is returned with False, so a caller that
     publishes it anyway makes the arm hold still instead of jumping.
     """
-    target_pose = np.asarray(target_pose, dtype=float)
-    q_ref = np.clip(np.asarray(q0, dtype=float)[:7], Q_MIN, Q_MAX)
+    target_pose = np.asarray(target_pose, dtype=float)#et2kd men el type
+    q_ref = np.clip(np.asarray(q0, dtype=float)[:7], Q_MIN, Q_MAX)#checking 3al type bardo then we keep first 7 numbers baaden hot ay angle bara el rang fel range
 
     # Reachability, quick reject: further than the arm can possibly stretch.
     if np.linalg.norm(target_pose[:3, 3] - SHOULDER) > MAX_REACH: #law el distance atwal men longest arm stretch return not reachable
@@ -304,7 +304,7 @@ def inverse_kinematics(target_pose, q0):
         return q, True
 
     # Fixed generator so the same call always gives the same answer.
-    rng = np.random.default_rng(0)
+    rng = np.random.default_rng(0) #hena bene3mel Backup 
     seeds = [Q_HOME] + [rng.uniform(Q_MIN, Q_MAX) for _ in range(IK_N_RANDOM_SEEDS)]
     best = None
     for seed in seeds:
@@ -365,7 +365,7 @@ class PandaKinematicsNode(Node):
             return
 
         if self.q_cmd is None:
-            q_sol, ok = inverse_kinematics(TARGET_POSE, self.q_current)
+            q_sol, ok = inverse_kinematics(TARGET_POSE, self.q_current) # hena ben call el inverse kinematics
             if not ok:
                 self.get_logger().warn(
                     "IK did not converge.",
