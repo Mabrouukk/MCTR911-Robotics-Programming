@@ -53,7 +53,7 @@ In the setup.py, change the entry point to include this file's name without the 
 DH_PARAMS = [
     [-np.pi / 2,  0.0,    0.333],  # link 1 shoulder # kol row le kol joint andena 7 rows 7 joints , kol row (alpha,a,d)
     [ np.pi / 2,  0.0,    0.0  ],  # link 2 joints 2 # el alpha el joint el baady twisted ad eh ala x 
-    [ np.pi / 2,  0.0825, 0.316],  # link 3 # el x heya el sideway distance along x axis, d heya el distance along z axis
+    [ np.pi / 2,  0.0825, 0.316],  # link 3 # el a heya el sideway distance along x axis, d heya el distance along z axis
     [-np.pi / 2, -0.0825, 0.0  ],  # link 4 # tab leh mafish hena theta 34an el theta betetghayar de el change el robot bylfo (q) w dah bytghy kol ma el robot yethrk fa el table de bas el hagat el sabta 
     [ np.pi / 2,  0.0,    0.384],  # link 5 # el distances de kolaha meters
     [ np.pi / 2,  0.088,  0.0  ],  # link 6
@@ -89,7 +89,7 @@ Q_MAX = np.array([ 2.8973,  1.7628,  2.8973, -0.0698,  2.8973,  3.7525,  2.8973]
 # forward_kinematics(TARGET_JOINTS) right after the functions below, so the
 # target is reachable by construction.
 TARGET_JOINTS = np.array([0.5, 0.3, -0.2, -2.0, 0.1, 2.3, 0.4]) # de el angles bta3t el joints el 3adeha lel forward kinematics 3shan ygeb el pose bta3t el hand we el FK btrg3 ek oriantation
-TARGET_POSE = None #DE el hayb2a feha el xyz towards el haga el ana 3ayz awslha S
+TARGET_POSE = None #el pose kamla (xyz + el hand basa feen, 4x4) el 3ayz awslha, betetmla taht: forward_kinematics(TARGET_JOINTS)
 
 # The 'home' keyframe from panda.xml. Used as a fallback IK seed.
 Q_HOME = np.array([0.0, 0.0, 0.0, -1.57079, 0.0, 1.57079, -0.7853])
@@ -102,14 +102,14 @@ Q_HOME = np.array([0.0, 0.0, 0.0, -1.57079, 0.0, 1.57079, -0.7853])
 # bound it never rejects a reachable target.
 SHOULDER = np.array([0.0, 0.0, 0.333])
 MAX_REACH = np.hypot(0.0825, 0.316) + np.hypot(0.0825, 0.384) + np.hypot(0.088, 0.107)
-#hasbtsha ezay men el shoulder lel elbow, elbow lel wrist, wrist lel hand, kol segment de 2D distance between the two points (x,y) fa el total distance de 3D distance between shoulder and hand
+#kol hypot = tool hetta wahda men el dra3 (shoulder->elbow, elbow->wrist, wrist->hand), el 2 numbers 3amodeen 3ala ba3d. el magmoo3 = akbar masafa el dra3 yemdaha (msh el masafa el 7a2i2eya lel hand)
 # IK settings.
 IK_POS_TOL = 1e-4        # 0.1 mm lama hawsl lel difference da ana kda yo3tabar weslt lel target 
 IK_ROT_TOL = 1e-3        # nafs el kalam hena lel twisting lw and 0.06 degrees yeb2a ana tamam
 IK_MAX_ITER = 200        # maximum numbers of loops lw mwsltsh stop lel guess el wahda
 IK_MAX_STEP = 0.2        # akbar change el joint by3mlo fel nudge el wahda
 IK_LAMBDA_BAR = 1e-4     # damping floor, keeps J^T J + lambda I invertible at singularities
-IK_N_RANDOM_SEEDS = 10   # mafrood abd2 men el HOME_Q tab lw fashalt garab 10 different PLaces
+IK_N_RANDOM_SEEDS = 10   # abda2 men q0 (el robot wa2ef feen dlwa2ty), lw fashalt agarab HOME_Q, ba3den 10 random places
 
 
 def dh_transform(alpha, a, d, theta):
@@ -169,12 +169,12 @@ def jacobian(q): #el function el hat2oly rl hand hatb2a feen lw 3mlt hagat mo3ay
     for i in range(7): #awel 3 rows movment of the hand position 
         z = frames[i][:3, 2]#akher 3 rows homa el rotation bta3et el hand 
         o = frames[i][:3, 3]
-        J[:3, i] = np.cross(z, p - o) #hena bzbt ana bahzeb el hand hatb2a feen related to the joints movement
+        J[:3, i] = np.cross(z, p - o) #z x (p-o) = el hand hatet7arak f anhy ettegah lw el joint da laf hetta soghayara
         J[3:, i] = z #el z hya el direction bta3t el joint wel o el joint feen p heya el hand p-o el arrow men el joint lel hand 
-    return J, T_hand # el cross product tedek el arrow men el joint lel hand 
+    return J, T_hand # p-o = el sahm men el joint lel hand, el cross product = ettegah 7arket el hand
 
 
-def _rotation_error(R_target, R): # el function de heya el betehseb el error target_xyz-current_xyz
+def _rotation_error(R_target, R): # el error f el LAF: el hand lazem telef ad eh 3ashan tebos zay el target (el xyz error f pose_error)
     """
     Axis-angle vector (in link0) that rotates R onto R_target.
 
