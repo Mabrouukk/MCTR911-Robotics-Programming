@@ -10,6 +10,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64MultiArray, String
 
+#el file da elly by3ml el bridge ben el ROS2 w el simulator (mujoco) elly 3amlo fel mac fe file esmo sim_bridge.py
 SIM_HOST = os.environ.get("SIM_HOST", "host.docker.internal")
 SIM_PORT = 9999
 JOINT_NAMES = [

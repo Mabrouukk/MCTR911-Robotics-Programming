@@ -9,7 +9,7 @@ GRIPPER_CLOSED = 255.0
 TOOL_DOWN = np.array([[0.0, 1.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, -1.0]])
 FLANGE_TO_PINCH = 0.156  # flange to the point between the gripper pads [m]
 
-STATION_XY = (0.105, 0.6)  # where parts stop against the conveyor's end stop
+STATION_XY = (0.105, 0.6)  # el makan el el object wa2f feh ala x,y
 PART_CENTER_Z = 0.325
 BIN_XY = {"red": (0.55, 0.25), "green": (0.55, -0.05), "blue": (0.55, -0.35)}
 
@@ -72,19 +72,19 @@ class SortingController:
         self._color = None
 
     def update(self, t, seen_color):
-        started = None
+        started = None #hena batcheck law ana 3ande tasks wla laa ana shayef ay color wla laa and so on
         if self._steps is None:
-            if seen_color in BIN_XY:
+            if seen_color in BIN_XY: #bashoof el loon lw tel3 green and red aw blue bashtaghal tab lw laa yeb2a lsa 
                 self._color = seen_color
-                self._steps = sorting_cycle(seen_color, self.q)
-                self._from_q, self._step, self._step_t0 = self.q, 0, t
-                started = f"{seen_color} part detected -> {self._steps[0][0]}"
+                self._steps = sorting_cycle(seen_color, self.q)#e3mel el steps bta3et el color da w b3mlha save feh
+                self._from_q, self._step, self._step_t0 = self.q, 0, t #prepare
+                started = f"{seen_color} part detected -> {self._steps[0][0]}" #print el step elly 3amlt start
             else:
                 return self.q, self.gripper, None
 
         label, target, gripper, duration = self._steps[self._step]
         s = min((t - self._step_t0) / duration, 1.0)
-        blend = 0.5 - 0.5 * np.cos(np.pi * s)  # smooth start and stop
+        blend = 0.5 - 0.5 * np.cos(np.pi * s)  #yemshe bera7a ba3deen ysr3 ba3deen yehady lama yege
         self.q = self._from_q + blend * (target - self._from_q)
         self.gripper = gripper
 

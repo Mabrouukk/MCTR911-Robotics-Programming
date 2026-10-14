@@ -30,6 +30,7 @@ MCTR/
 │   ├── code/                # DH kinematics, ROS2-MuJoCo bridge, input modes, colour sorting cell
 │   ├── report/              # Milestone 2 report + figures
 │   └── videos/              # simulation + GUI videos
+├── Challenge 01/            # Robotics Programming Challenge 1: Franka Panda FK + IK (ROS 2 package)
 ├── docker/                  # ROS2 + MuJoCo containerized environment
 └── README.md
 ```
@@ -42,5 +43,6 @@ Later milestones (`Milestone 03`, `Milestone 04`) will be added as their own top
 |---|---|
 | 1 | `scripts/run_ms1.sh` |
 | 2 | `scripts/run_ms2.sh` runs the colour sorting cell (optionally `sine`, `constant`, `sliders`, or `ik --xyz X Y Z`) |
+| Challenge 1 | `scripts/run_ch1.sh` moves the Franka Panda to its IK target (or `verify` for the FK/IK checks) |
 
 Details on the ROS2 (Docker) + MuJoCo (native) setup are in [docker/README.md](docker/README.md).
