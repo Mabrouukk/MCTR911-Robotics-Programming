@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 
 import mujoco
 import numpy as np
@@ -43,7 +44,7 @@ class Video:
              "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "20", self.path],
             stdin=subprocess.PIPE)
 
-    def frame(self, data, title, lines=()):
+    def frame(self, data, title, lines=(), sliders=()):
         self.renderer.update_scene(data, self.camera)
         image = Image.fromarray(self.renderer.render())
         draw = ImageDraw.Draw(image, "RGBA")
@@ -51,6 +52,20 @@ class Video:
         draw.text((20, 10), title, font=TITLE_FONT, fill="white")
         for i, line in enumerate(lines):
             draw.text((20, 52 + 32 * i), line, font=TEXT_FONT, fill=(230, 230, 230))
+        # Slider panel, drawn like the viewer's Control panel: one bar per actuator.
+        # sliders = [(name, value, low, high, active), ...]
+        if sliders:
+            x0, y0, w = WIDTH - 330, 150, 300
+            draw.rectangle((x0 - 15, y0 - 45, x0 + w + 15, y0 + 52 * len(sliders) + 5), fill=(0, 0, 0, 160))
+            draw.text((x0, y0 - 38), "Control sliders", font=TEXT_FONT, fill="white")
+            for i, (name, value, low, high, active) in enumerate(sliders):
+                y = y0 + 52 * i
+                color = (255, 200, 0) if active else (200, 200, 200)
+                draw.text((x0, y), f"{name}  {value:+.2f}", font=TEXT_FONT, fill=color)
+                draw.rectangle((x0, y + 28, x0 + w, y + 36), fill=(90, 90, 90))
+                knob = x0 + w * (value - low) / (high - low)
+                draw.rectangle((x0, y + 28, knob, y + 36), fill=color)
+                draw.ellipse((knob - 8, y + 24, knob + 8, y + 40), fill=color)
         draw.text((WIDTH - 150, HEIGHT - 36), f"t = {data.time:5.1f} s", font=TEXT_FONT, fill="white")
         self.ffmpeg.stdin.write(image.tobytes())
 
@@ -161,9 +176,45 @@ def joint_inputs_video():
     video.close()
 
 
+def sliders_video():
+    """Re-creates dragging the viewer's Control-panel sliders: one actuator at a time
+    goes out and back while the others hold home. Like a slider, it sets data.ctrl directly."""
+    cell = Cell()
+    video = Video(cell.model, "ms2_sliders.mp4", lookat=(0.0, 0.3, 0.45), distance=2.2,
+                  azimuth=-140, elevation=-20)
+    names = ARM_ACTUATORS + ["gripper"]
+    acts = cell.arm_act + [cell.grip_act]
+    low, high = cell.model.actuator_ctrlrange[acts, 0], cell.model.actuator_ctrlrange[acts, 1]
+    # How far each slider is dragged away from home (rad for the arm, 0-255 for the gripper).
+    reach = np.r_[np.radians([45, -25, 30, 45, 45, 90]), GRIPPER_CLOSED]
+    home = np.r_[HOME_Q, GRIPPER_OPEN]
+    duration = 3.0
+
+    for k, name in enumerate(names):
+        def ctrl(t, k=k):
+            c = home.copy()
+            c[k] += reach[k] * np.sin(np.pi * min(t / duration, 1.0))
+            return c
+
+        def caption(t, k=k, name=name):
+            c = ctrl(t)
+            return ("Input 4: sliders (manual control of each actuator)",
+                    [f"Dragging the '{name}' slider: it sets that actuator's target directly",
+                     "Re-created offscreen: same effect as the viewer's Control panel"],
+                    [(n, c[i], low[i], high[i], i == k) for i, n in enumerate(names)])
+
+        cell.run(video, duration, lambda t, k=k: (ctrl(t, k)[:6], ctrl(t, k)[6]), caption)
+    video.close()
+
+
 def main():
-    sorting_video()
-    joint_inputs_video()
+    which = sys.argv[1:] or ["sorting", "inputs", "sliders"]
+    if "sorting" in which:
+        sorting_video()
+    if "inputs" in which:
+        joint_inputs_video()
+    if "sliders" in which:
+        sliders_video()
 
 
 if __name__ == "__main__":
