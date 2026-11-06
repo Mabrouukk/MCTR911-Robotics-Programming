@@ -22,9 +22,9 @@ The videos have on-screen comments. They have no voice; record one over them if 
 ## Run it
 
 ```bash
-scripts/run_ms3.sh forward    # simulator + ROS 2: joint sine waves, every instant checked live
-scripts/run_ms3.sh inverse    # simulator + ROS 2: a flange path -> IK / J^-1 -> joint commands
-scripts/run_ms3.sh sort       # the colour sorting in the full environment, checks running
+scripts/run_ms3.sh            # the colour sorting in the full environment, checks running (default)
+scripts/run_ms3.sh forward    # test: every joint follows a sine wave, every instant checked live
+scripts/run_ms3.sh inverse    # test: a flange path (line + circle) -> IK / J^-1 -> joint commands
 scripts/run_ms3.sh validate   # all offline tests + report figures, no ROS 2 (about 6 s)
 scripts/run_ms3.sh derive     # symbolic derivation with sympy (about 5 s)
 ```

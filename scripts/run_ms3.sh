@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Milestone 3 in one command: MuJoCo simulator (with the live kinematics panel) + ROS2 bridge + a test.
 #
-#   scripts/run_ms3.sh forward    joint-space input (sine waves); checks FK, J q_dot, J q_ddot + J_dot q_dot
-#                                 and IK, J^-1, J^-1(...) against the simulator's sensors, live (default)
-#   scripts/run_ms3.sh inverse    task-space input: a flange path -> IK / J^-1 / J^-1(...) -> joint commands;
+#   scripts/run_ms3.sh            colour sorting in the full environment, kinematics checks running (default)
+#   scripts/run_ms3.sh forward    test: every joint follows a sine wave (joint-space input); checks FK, J q_dot,
+#                                 J q_ddot + J_dot q_dot and IK, J^-1, J^-1(...) against the sensors, live
+#   scripts/run_ms3.sh inverse    test: a flange path (line + circle) -> IK / J^-1 / J^-1(...) -> joint commands;
 #                                 same checks, plus how closely the flange follows the path
-#   scripts/run_ms3.sh sort       Milestone 2's colour sorting in the full environment, checks running
 #   scripts/run_ms3.sh validate   offline checks + report figures, no simulator window, no ROS2 (about 6 s)
 #   scripts/run_ms3.sh derive     symbolic derivation of J, det J and J_dot with sympy (about 5 s)
 #
@@ -17,11 +17,11 @@ CODE="Milestone 03/code"
 CONTAINER=mctr911_ms3
 SIM_PID=""
 LOGS_PID=""
-MODE="${1:-forward}"
+MODE="${1:-sort}"
 
 case "$MODE" in
     forward|inverse|sort|validate|derive) ;;
-    *) echo "Usage: $0 [forward|inverse|sort|validate|derive]"; exit 1 ;;
+    *) echo "Usage: $0 [sort|forward|inverse|validate|derive]"; exit 1 ;;
 esac
 
 cd "$ROOT"

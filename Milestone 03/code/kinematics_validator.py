@@ -223,7 +223,7 @@ class KinematicsValidator(Node):
 
 
 def main():
-    mode = sys.argv[1] if len(sys.argv) > 1 else "forward"
+    mode = sys.argv[1] if len(sys.argv) > 1 else "sort"
     if mode not in ("forward", "inverse", "sort"):
         raise SystemExit("usage: kinematics_validator.py [forward|inverse|sort]")
     rclpy.init()

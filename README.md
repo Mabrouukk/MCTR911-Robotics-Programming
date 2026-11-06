@@ -48,7 +48,7 @@ Later milestones (`Milestone 04`) will be added as their own top-level folders f
 |---|---|
 | 1 | `scripts/run_ms1.sh` |
 | 2 | `scripts/run_ms2.sh` runs the colour sorting cell (optionally `sine`, `constant`, `sliders`, or `ik --xyz X Y Z`) |
-| 3 | `scripts/run_ms3.sh` checks the velocity / acceleration kinematics live against the simulator (`forward`, `inverse`, `sort`, or `validate` / `derive` offline) |
+| 3 | `scripts/run_ms3.sh` runs the colour sorting in the full environment with live kinematics checks (or `forward` / `inverse` kinematics tests, `validate` / `derive` offline) |
 | Challenge 1 | `scripts/run_ch1.sh` moves the Franka Panda to its IK target (or `verify` for the FK/IK checks) |
 | Challenge 2 | `scripts/run_ch2.sh position` or `velocity` plays the folding trajectory in that control mode (or `verify` for the checks and plots) |
 

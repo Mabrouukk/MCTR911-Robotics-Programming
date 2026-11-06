@@ -61,9 +61,9 @@
         {
             "id": "ms3Mode",
             "type": "pickString",
-            "description": "forward / inverse / sort = simulator + ROS2 + live checks, validate / derive = offline",
-            "options": ["forward", "inverse", "sort", "validate", "derive"],
-            "default": "forward"
+            "description": "sort = colour sorting, forward / inverse = kinematics tests (simulator + ROS2), validate / derive = offline",
+            "options": ["sort", "forward", "inverse", "validate", "derive"],
+            "default": "sort"
         },
         {
             "id": "ch1Mode",
