@@ -28,6 +28,13 @@
             "command": "${workspaceFolder}/scripts/run_ch1.sh ${input:ch1Mode}",
             "presentation": { "reveal": "always", "panel": "new" },
             "problemMatcher": []
+        },
+        {
+            "label": "Run Challenge 2",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_ch2.sh ${input:ch2Mode}",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
         }
     ],
     "inputs": [
@@ -50,6 +57,13 @@
             "description": "run = simulator + IK node, verify = FK/IK checks against MuJoCo only",
             "options": ["run", "verify"],
             "default": "run"
+        },
+        {
+            "id": "ch2Mode",
+            "type": "pickString",
+            "description": "position / velocity = simulator + trajectory_node in that control mode, verify = checks + plots only",
+            "options": ["position", "velocity", "verify"],
+            "default": "position"
         }
     ]
 }
