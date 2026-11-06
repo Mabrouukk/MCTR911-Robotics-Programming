@@ -58,7 +58,7 @@ The videos are rendered by `.venv/bin/python "Milestone 03/code/render_videos.py
 | 1000 random joint states put into the simulator: FK, J q̇, J q̈ + J̇ q̇ vs the sensors, and IK, J⁻¹, J⁻¹(…) back to the joints | all 9 checks pass, worst error 3·10⁻¹³ (round-off). Tolerance 10⁻⁶ (10⁻⁵ for accelerations). |
 | Same, while the physics runs (servos follow sine waves, flange up to 1.0 m/s and 5 m/s²) | all pass, worst 5·10⁻¹⁴ |
 | Same, live through ROS 2 | forward run: 265 instants checked; inverse run: 353. All pass. |
-| Inverse kinematics driving the robot along a task-space path (line + circle, gripper down) | 68 mm off with joint angles only (servo lag); **0.55 mm** with velocity feed-forward (0.70 mm through ROS 2) |
+| Inverse kinematics driving the robot along a task-space path (line + circle, gripper down) | 68 mm off with joint angles only (servo lag); **0.55 mm** with velocity feed-forward (0.5 mm from the path through ROS 2, in every run) |
 | Symbolic J vs numeric J, symbolic J̇ vs recursive J̇, det J closed form | agree to 7·10⁻¹⁶, 2·10⁻¹⁵, 6·10⁻¹⁷ |
 | Near the wrist singularity (q5 = 0.05°), for 5 cm/s | plain J⁻¹ asks 146 rad/s; damped asks 0.02 rad/s (limit π) |
 | Sorting still works in the new environment | all 6 parts sorted in 83 s, as in Milestone 2 |
@@ -128,4 +128,9 @@ The videos are rendered by `.venv/bin/python "Milestone 03/code/render_videos.py
 **"Why does the ROS 2 test need time stamps?"**
 - The joint and flange readings must come from the same instant.
 - The bridge stamps every message with the simulator time, and the validator matches them by stamp.
-- Lining up the clocks wrongly (using a 33 ms old state as the start) showed up as 10 mm of false error.
+
+**"How do you measure 'follows the path' through ROS 2?"**
+- As the distance from the sensed flange to the nearest point of the planned path (the contour error).
+- A command and the state answering it each take a few ms through Docker, and that round trip changes from run to run.
+- Measured against where the plan says the flange should be *right now*, 20 ms of delay at 0.3 m/s reads as 6 mm of "error" even though the flange is on the path. Our first version did that and gave 0.7–5.8 mm depending on the run.
+- Measured as distance to the path, every run gives 0.5 mm. The delay is printed separately (2–8 ms).
