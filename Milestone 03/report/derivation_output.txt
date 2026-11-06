@@ -1,0 +1,65 @@
+========================================================================
+1. Forward position kinematics, T_0^6 = A1 A2 A3 A4 A5 A6
+========================================================================
+DH table (standard): i | theta | d | a | alpha
+  1 | q1 | d1 | 0 | pi/2
+  2 | q2 | 0 | a2 | 0
+  3 | q3 | 0 | a3 | 0
+  4 | q4 | d4 | 0 | pi/2
+  5 | q5 | d5 | 0 | -pi/2
+  6 | q6 | d6 | 0 | 0
+
+Flange position p = (px, py, pz):
+  px = d4*sin(q1) + d5*sin(q2 + q3 + q4)*cos(q1) + d6*(sin(q1)*cos(q5) - sin(q5)*cos(q1)*cos(q2 + q3 + q4)) + (a2*cos(q2) + a3*cos(q2 + q3))*cos(q1)
+  py = -d4*cos(q1) + d5*sin(q1)*sin(q2 + q3 + q4) - d6*(sin(q1)*sin(q5)*cos(q2 + q3 + q4) + cos(q1)*cos(q5)) + (a2*cos(q2) + a3*cos(q2 + q3))*sin(q1)
+  pz = a2*sin(q2) + a3*sin(q2 + q3) + d1 - d5*cos(q2 + q3 + q4) - d6*sin(q5)*sin(q2 + q3 + q4)
+
+========================================================================
+2. Velocity kinematics: the geometric Jacobian
+========================================================================
+Column i: J_i = [ z_(i-1) x (p - o_(i-1)) ; z_(i-1) ]
+Joint axes z_(i-1) (third column of T_0^(i-1)):
+  z0 = [0, 0, 1]
+  z1 = [sin(q1), -cos(q1), 0]
+  z2 = [sin(q1), -cos(q1), 0]
+  z3 = [sin(q1), -cos(q1), 0]
+  z4 = [sin(q2 + q3 + q4)*cos(q1), sin(q1)*sin(q2 + q3 + q4), -cos(q2 + q3 + q4)]
+  z5 = [sin(q1)*cos(q5) - sin(q5)*cos(q1)*cos(q2 + q3 + q4), -sin(q1)*sin(q5)*cos(q2 + q3 + q4) - cos(q1)*cos(q5), -sin(q5)*sin(q2 + q3 + q4)]
+
+Column 1 (base joint, z0 = (0,0,1) through the origin):
+  J_1 = [d4*cos(q1) - d5*sin(q1)*sin(q2 + q3 + q4) + d6*(sin(q1)*sin(q5)*cos(q2 + q3 + q4) + cos(q1)*cos(q5)) - (a2*cos(q2) + a3*cos(q2 + q3))*sin(q1), d4*sin(q1) + d5*sin(q2 + q3 + q4)*cos(q1) + d6*(sin(q1)*cos(q5) - sin(q5)*cos(q1)*cos(q2 + q3 + q4)) + (a2*cos(q2) + a3*cos(q2 + q3))*cos(q1), 0, 0, 0, 1]   i.e. (-py, px, 0, 0, 0, 1)
+Column 6 (last joint): its axis passes through the flange point, so
+  J_6 = [0, 0, 0, sin(q1)*cos(q5) - sin(q5)*cos(q1)*cos(q2 + q3 + q4), -sin(q1)*sin(q5)*cos(q2 + q3 + q4) - cos(q1)*cos(q5), -sin(q5)*sin(q2 + q3 + q4)]   (linear part is zero: joint 6 only spins the flange)
+
+Check: the linear rows equal d p / d q (differentiating the FK directly):
+  max |z x (p - o) - dp/dq| over 50 random q: 2.2e-16
+
+Forward velocity:  [v; w] = J(q) q_dot
+Inverse velocity:  q_dot = J(q)^-1 [v; w]   (J is 6x6, so it has an inverse away from singularities)
+
+========================================================================
+3. Singularities: where det J = 0
+========================================================================
+det J = a2 a3 sin(q3) sin(q5) (a2 cos(q2) + a3 cos(q2+q3) + d5 sin(q2+q3+q4))
+  closed form vs det of the symbolic J at 200 random q: max difference 5.6e-17
+  elbow singularity:    sin(q3) = 0  (arm stretched straight or folded flat)
+  wrist singularity:    sin(q5) = 0  (axes of joints 4 and 6 line up)
+  shoulder singularity: a2 cos(q2) + a3 cos(q2+q3) + d5 sin(q2+q3+q4) = 0 (wrist centre on the joint 1 axis)
+
+========================================================================
+4. Acceleration kinematics
+========================================================================
+Differentiate x_dot = J q_dot in time:  x_ddot = J q_ddot + J_dot q_dot
+J_dot = sum over k of (dJ/dq_k) * qd_k   (chain rule, J depends on time only through q)
+Column 1 of J_dot (base joint):
+  [d6*qd5*(sin(q1)*cos(q5)*cos(q2 + q3 + q4) - sin(q5)*cos(q1)) - qd1*(d4*sin(q1) + d5*sin(q2 + q3 + q4)*cos(q1) + d6*(sin(q1)*cos(q5) - sin(q5)*cos(q1)*cos(q2 + q3 + q4)) + (a2*cos(q2) + a3*cos(q2 + q3))*cos(q1)) + qd2*(a2*sin(q2) + a3*sin(q2 + q3) - d5*cos(q2 + q3 + q4) - d6*sin(q5)*sin(q2 + q3 + q4))*sin(q1) - qd3*(-a3*sin(q2 + q3) + d5*cos(q2 + q3 + q4) + d6*sin(q5)*sin(q2 + q3 + q4))*sin(q1) - qd4*(d5*cos(q2 + q3 + q4) + d6*sin(q5)*sin(q2 + q3 + q4))*sin(q1), -d6*qd5*(sin(q1)*sin(q5) + cos(q1)*cos(q5)*cos(q2 + q3 + q4)) + qd1*(d4*cos(q1) - d5*sin(q1)*sin(q2 + q3 + q4) + d6*(sin(q1)*sin(q5)*cos(q2 + q3 + q4) + cos(q1)*cos(q5)) - (a2*cos(q2) + a3*cos(q2 + q3))*sin(q1)) + qd2*(-a2*sin(q2) - a3*sin(q2 + q3) + d5*cos(q2 + q3 + q4) + d6*sin(q5)*sin(q2 + q3 + q4))*cos(q1) + qd3*(-a3*sin(q2 + q3) + d5*cos(q2 + q3 + q4) + d6*sin(q5)*sin(q2 + q3 + q4))*cos(q1) + qd4*(d5*cos(q2 + q3 + q4) + d6*sin(q5)*sin(q2 + q3 + q4))*cos(q1), 0, 0, 0, 0]
+  symbolic J_dot vs velocity_kinematics.jacobian_dot (recursive formula), 50 random (q, q_dot): 1.8e-15
+Forward acceleration:  [a; alpha] = J q_ddot + J_dot q_dot
+Inverse acceleration:  q_ddot = J^-1 ([a; alpha] - J_dot q_dot)
+
+========================================================================
+5. Symbolic J vs velocity_kinematics.jacobian (numbers)
+========================================================================
+  max difference over 50 random q: 6.9e-16
+
+Done in 5 s.
