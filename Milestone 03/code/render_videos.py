@@ -38,6 +38,7 @@ VIDEOS = os.path.join(HERE, "..", "videos")
 RESULTS = os.path.join(HERE, "..", "report", "validation_results.json")
 WIDTH, HEIGHT, FPS = 1280, 720, 30
 KV_OVER_KP = 0.2      # position servo lag kd/kp of every UR5e joint in the model
+PANEL_EVERY = 8       # refresh the numbers in the data panel about 4 times a second
 
 
 def _font(size, mono=False):
@@ -72,6 +73,8 @@ class Video:
         self.camera = mujoco.MjvCamera()
         self.set_camera(lookat, distance, azimuth, elevation)
         self.markers = []          # (pos, radius, rgba) drawn into the 3D scene
+        self._count = 0
+        self._panel = None         # the numbers shown, refreshed a few times a second only
         self.ffmpeg = subprocess.Popen(
             ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
              "-s", f"{WIDTH}x{HEIGHT}", "-r", str(FPS), "-i", "-",
@@ -105,6 +108,13 @@ class Video:
         for i, line in enumerate(caption):
             draw.text((20, 50 + 28 * i), line, font=TEXT, fill=(230, 230, 230))
         # Data panel, bottom left: (label, value, colour) rows in a monospace font.
+        # Numbers that change 30 times a second can't be read, so the panel is
+        # only refreshed every PANEL_EVERY frames (and whenever its rows change).
+        if panel and (self._panel is None or self._count % PANEL_EVERY == 0
+                      or [r[0] for r in panel] != [r[0] for r in self._panel]):
+            self._panel = list(panel)
+        panel = self._panel if panel else None
+        self._count += 1
         if panel:
             h = 22 * len(panel) + 16
             y0 = HEIGHT - h - 12

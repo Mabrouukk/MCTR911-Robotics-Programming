@@ -32,7 +32,7 @@ scripts/run_ms3.sh derive     # symbolic derivation with sympy (about 5 s)
 Or in VS Code: ⌘⇧P → "Tasks: Run Task" → **Run Milestone 3**.
 
 **What you'll see:**
-- **The viewer:** the cell, with a **live kinematics panel** at the top right. It shows the sensed flange position, velocity and acceleration next to our equations, plus the forward and inverse errors.
+- **The viewer:** the cell, with a small **live kinematics panel** at the top right. Each check (position, velocity, acceleration, inverse) gets one line: OK or FAIL, with the worst error so far. Below them are the flange speed and how far the arm is from a singularity. Run `sim_bridge.py --no-panel` to hide it; Tab / Shift+Tab open the viewer's side menus.
 - **The terminal:** the validator prints the errors every second, then a PASS/FAIL table.
 
 The videos are rendered by `.venv/bin/python "Milestone 03/code/render_videos.py"`.

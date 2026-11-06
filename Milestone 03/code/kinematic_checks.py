@@ -40,29 +40,45 @@ def kinematics_check(q, dq, ddq, ee):
     return out
 
 
-def panel_text(ee, check):
-    """Two text columns for the viewer overlay."""
-    p, v, w, a, alpha = check["pred"]
-    f = lambda x: "[" + " ".join(f"{c:+.3f}" for c in x) + "]"  # noqa: E731
-    left = "\n".join([
-        "KINEMATICS CHECK (live)", "",
-        "flange position  sensed", "            FK(q)",
-        "linear velocity  sensed", "            J q_dot",
-        "angular velocity sensed", "            J q_dot",
-        "linear accel.    sensed", "            J q_ddot + J_dot q_dot",
-        "", "forward errors  pos / vel / acc",
-        "inverse errors  IK / J^-1 v / J^-1 a",
-        "sigma_min(J)",
-    ])
-    right = "\n".join([
-        "", "",
-        f"{f(ee['p'])} m", f"{f(p)} m",
-        f"{f(ee['v'])} m/s", f"{f(v)} m/s",
-        f"{f(ee['w'])} rad/s", f"{f(w)} rad/s",
-        f"{f(ee['a'])} m/s2", f"{f(a)} m/s2",
-        "",
-        f"{check['fk_pos']:.0e} m / {check['fv_lin']:.0e} m/s / {check['fa_lin']:.0e} m/s2",
-        f"{check['ik']:.0e} / {check['iv']:.0e} / {check['ia']:.0e} rad(/s)(/s2)",
-        f"{check['sigma_min']:.3f} m/rad" + ("   NEAR SINGULAR" if check["sigma_min"] < vk.SINGULAR_EPS else ""),
-    ])
-    return left, right
+class Panel:
+    """
+    The small live panel in the viewer: one line per check, OK / FAIL, and the
+    worst error seen so far (so the numbers stay still instead of flickering).
+    """
+
+    TOL = {"pos": 1e-6, "vel": 1e-6, "acc": 1e-5, "inv": 1e-5}
+
+    def __init__(self):
+        self.worst = dict.fromkeys(self.TOL, 0.0)
+
+    def update(self, ee, check):
+        w = self.worst
+        w["pos"] = max(w["pos"], check["fk_pos"])
+        w["vel"] = max(w["vel"], check["fv_lin"], check["fv_ang"])
+        w["acc"] = max(w["acc"], check["fa_lin"], check["fa_ang"])
+        if check["sigma_min"] >= vk.SINGULAR_EPS:          # inverse is damped right at a singularity
+            w["inv"] = max(w["inv"], check["ik"], check["iv"], check["ia"])
+
+        def status(key):
+            return "OK" if w[key] < self.TOL[key] else "FAIL"
+
+        near = check["sigma_min"] < vk.SINGULAR_EPS
+        left = "\n".join([
+            "EQUATIONS vs SENSORS",
+            "position   FK(q)",
+            "velocity   J q_dot",
+            "accel.     J q_ddot + J_dot q_dot",
+            "inverse    IK, J^-1",
+            "flange speed",
+            "singularity",
+        ])
+        right = "\n".join([
+            "worst error so far",
+            f"{status('pos')}   {w['pos']:.0e} m",
+            f"{status('vel')}   {w['vel']:.0e} m/s",
+            f"{status('acc')}   {w['acc']:.0e} m/s2",
+            f"{status('inv')}   {w['inv']:.0e} rad",
+            f"{np.linalg.norm(ee['v']):.2f} m/s",
+            ("NEAR  " if near else "far   ") + f"(sigma_min {check['sigma_min']:.2f})",
+        ])
+        return left, right

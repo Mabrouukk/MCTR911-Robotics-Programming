@@ -28,7 +28,7 @@ import mujoco.viewer
 import numpy as np
 
 from ee_sensors import add_ee_sensors, read_ee
-from kinematic_checks import kinematics_check, panel_text
+from kinematic_checks import Panel, kinematics_check
 from kinematics import HOME_Q, ROBOT_BASE_POS
 from sorting_task import PART_CENTER_Z, STATION_XY
 
@@ -36,7 +36,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 CAD = os.path.join(HERE, "..", "..", "Milestone 01", "cad_models")
 PORT = 9996                # Milestone 2 uses 9999, the challenges 9998 / 9997
 STATE_PERIOD = 1 / 30
-PANEL_PERIOD = 0.2
+PANEL_PERIOD = 0.5
 
 ARM_JOINTS = [
     "shoulder_pan_joint", "shoulder_lift_joint", "elbow_joint",
@@ -174,6 +174,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--headless", action="store_true", help="no viewer window (automated tests)")
     parser.add_argument("--duration", type=float, default=None, help="stop after this many seconds")
+    parser.add_argument("--no-panel", action="store_true", help="hide the live kinematics panel")
     args = parser.parse_args()
 
     model = build_model()
@@ -189,6 +190,7 @@ def main():
 
     bridge = Bridge(PORT)
     last = {"state": 0.0, "panel": 0.0, "sync": 0.0}
+    live_panel = Panel()
 
     def run(viewer):
         wall0, sim0 = time.time(), data.time
@@ -206,7 +208,7 @@ def main():
 
             now = time.time()
             send = now - last["state"] >= STATE_PERIOD
-            panel = viewer is not None and now - last["panel"] >= PANEL_PERIOD
+            panel = viewer is not None and not args.no_panel and now - last["panel"] >= PANEL_PERIOD
             if send or panel:
                 # mj_step leaves qacc and the sensors at the state BEFORE the
                 # step; mj_forward recomputes them for the current state, so
@@ -229,7 +231,7 @@ def main():
             if panel:
                 last["panel"] = now
                 viewer.set_texts((mujoco.mjtFontScale.mjFONTSCALE_100, mujoco.mjtGridPos.mjGRID_TOPRIGHT,
-                                  *panel_text(ee, kinematics_check(q, dq, ddq, ee))))
+                                  *live_panel.update(ee, kinematics_check(q, dq, ddq, ee))))
             if viewer is not None and now - last["sync"] >= 1 / 60:
                 last["sync"] = now
                 viewer.sync()
@@ -242,7 +244,13 @@ def main():
     if args.headless:
         run(None)
     else:
-        with mujoco.viewer.launch_passive(model, data) as viewer:
+        # Side menus closed so the 3D view gets the whole window (Tab / Shift+Tab open them).
+        with mujoco.viewer.launch_passive(model, data, show_left_ui=False, show_right_ui=False) as viewer:
+            # Start looking at the robot, from above inside the fence.
+            viewer.cam.lookat[:] = (0.1, 0.3, 0.6)
+            viewer.cam.distance = 1.6
+            viewer.cam.azimuth = -150
+            viewer.cam.elevation = -38
             run(viewer)
 
 
