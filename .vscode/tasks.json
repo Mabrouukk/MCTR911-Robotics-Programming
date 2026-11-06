@@ -23,6 +23,13 @@
             "problemMatcher": []
         },
         {
+            "label": "Run Milestone 3",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_ms3.sh ${input:ms3Mode}",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
+        },
+        {
             "label": "Run Challenge 1",
             "type": "shell",
             "command": "${workspaceFolder}/scripts/run_ch1.sh ${input:ch1Mode}",
@@ -50,6 +57,13 @@
             "type": "promptString",
             "description": "World x y z in meters (pick station: 0.105 0.6 0.6, red bin: 0.55 0.25 0.6)",
             "default": "0.105 0.6 0.6"
+        },
+        {
+            "id": "ms3Mode",
+            "type": "pickString",
+            "description": "sort = colour sorting, forward / inverse = kinematics tests (simulator + ROS2), validate / derive = offline",
+            "options": ["sort", "forward", "inverse", "validate", "derive"],
+            "default": "sort"
         },
         {
             "id": "ch1Mode",
