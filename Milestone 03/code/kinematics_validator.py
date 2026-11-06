@@ -44,7 +44,8 @@ LABELS = {"fk_pos": "forward position  FK(q) vs sensed position [m]",
           "ik": "inverse position  IK(sensed pose) vs sensed q [rad]",
           "iv": "inverse velocity  J^-1 sensed twist vs sensed q_dot [rad/s]",
           "ia": "inverse accel.    J^-1 (sensed acc. - J_dot q_dot) vs sensed q_ddot [rad/s^2]"}
-PATH_TOL = 0.005      # 5 mm: the flange following the planned path in inverse mode
+PATH_TOL = 0.005      # 5 mm: the flange staying on the planned path in inverse mode
+PATH_WINDOW = 0.3     # s: look for the nearest path point within this time of where the plan says
 
 # Joint sine waves for the forward test (same as validate_kinematics.py).
 AMP = np.radians([40, 25, 30, 40, 40, 60])
@@ -72,6 +73,7 @@ class KinematicsValidator(Node):
         self.worst = dict.fromkeys(TOL, 0.0)
         self.worst_path = 0.0
         self.worst_path_t = 0.0
+        self.lags = []              # how far behind schedule (s) the flange is, from the nearest path point
         self.n = 0
         self.min_sigma = np.inf
         self.last_report = -1.0
@@ -187,10 +189,20 @@ class KinematicsValidator(Node):
             self.worst[k] = max(self.worst[k], c[k])
         path_err = None
         if self.mode == "inverse":
+            # Distance from the sensed flange to the planned PATH (the nearest point of
+            # the curve), not to where the plan says it should be at this very moment.
+            # Through ROS 2 + Docker a command and the state that answers it take a few
+            # ms each way, and that round trip changes from run to run; at 0.3 m/s,
+            # 20 ms of it would read as 6 mm of "error" while the flange is on the path.
+            # The delay is reported separately, as the time lag.
             tp = sim_t - self.sim_t0 - LEAD_IN
             if tp >= 0:
-                p_ref, _, _ = task_path.flange_target(tp)
-                path_err = np.linalg.norm(p - p_ref)
+                near = np.abs(self.path["t"] - min(tp, task_path.T_TOTAL)) <= PATH_WINDOW
+                dist = np.linalg.norm(self.path["p"][near] - p, axis=1)
+                k = int(np.argmin(dist))
+                path_err = dist[k]
+                if 0.2 < tp < task_path.T_TOTAL - 0.2:
+                    self.lags.append(tp - self.path["t"][near][k])
                 if path_err > self.worst_path:
                     self.worst_path, self.worst_path_t = path_err, tp
         if sim_t - self.last_report >= 1.0:
@@ -199,7 +211,7 @@ class KinematicsValidator(Node):
                     f"acc {c['fa_lin']:.0e} m/s2 | inverse: IK {c['ik']:.0e} rad, J^-1v {c['iv']:.0e} rad/s, "
                     f"J^-1a {c['ia']:.0e} rad/s2 | sigma_min {c['sigma_min']:.3f}")
             if path_err is not None:
-                line += f" | path error {path_err * 1000:.2f} mm"
+                line += f" | distance to path {path_err * 1000:.2f} mm"
             self.get_logger().info(line)
 
     def finish(self):
@@ -216,8 +228,11 @@ class KinematicsValidator(Node):
         if self.mode == "inverse":
             ok = self.worst_path < PATH_TOL
             ok_all &= ok
-            lines.append(f"  [{'PASS' if ok else 'FAIL'}] {'flange follows the planned path (via ROS 2, 50 Hz commands) [m]':76s} "
+            lines.append(f"  [{'PASS' if ok else 'FAIL'}] {'flange stays on the planned path (via ROS 2, 50 Hz commands) [m]':76s} "
                          f"worst {self.worst_path:.1e}  (tol {PATH_TOL:.0e}), at t = {self.worst_path_t:.2f} s of the path")
+            if self.lags:
+                lines.append(f"         time lag behind the plan (ROS 2 round trip + servo): median "
+                             f"{np.median(self.lags) * 1000:.0f} ms")
         lines.append("  ALL PASSED" if ok_all else "  SOME CHECKS FAILED")
         self.get_logger().info("\n".join(lines))
 
