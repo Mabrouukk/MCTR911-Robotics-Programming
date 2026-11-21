@@ -49,9 +49,23 @@
             "command": "${workspaceFolder}/scripts/run_ch2.sh ${input:ch2Mode}",
             "presentation": { "reveal": "always", "panel": "new" },
             "problemMatcher": []
+        },
+        {
+            "label": "Run Challenge 3",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_ch3.sh ${input:ch3Mode}",
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
         }
     ],
     "inputs": [
+        {
+            "id": "ch3Mode",
+            "type": "pickString",
+            "description": "Which controller should drive the Panda?",
+            "options": ["model_flc", "gravity_flc", "model_only", "flc_only", "verify"],
+            "default": "model_flc"
+        },
         {
             "id": "ms4Mode",
             "type": "pickString",
