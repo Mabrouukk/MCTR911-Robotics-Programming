@@ -1,0 +1,410 @@
+{
+  "dynamics": {
+    "M": 5.9960925113955454e-12,
+    "bias": 1.2755663192365319e-10,
+    "tau": 1.432880480933818e-10,
+    "gravity": 3.08308933938406e-11,
+    "dMdq": 1.332267607526822e-09,
+    "skew": 3.552713678800501e-15,
+    "largest_torque_tested_Nm": 125.2399609533789,
+    "ms_per_inverse_dynamics": 0.827292213216424,
+    "arm_mass_kg": 18.04750833884274
+  },
+  "trajectories": {
+    "quintic_boundary_error": 1.1102230246251565e-16,
+    "coefficients_vs_profile": 9.547918011776346e-15,
+    "task_space_consistency": 4.427090285605664e-15,
+    "swing_move": {
+      "quintic": {
+        "T": 3.301485892708148,
+        "vel_ratio": 0.4999997497498438,
+        "acc_ratio": 0.1220862936978005
+      },
+      "lspb": {
+        "T": 2.6411887141665185,
+        "vel_ratio": 0.49999999999999994,
+        "acc_ratio": 0.14868270472019202
+      }
+    }
+  },
+  "tracking": {
+    "joint": {
+      "pd": {
+        "joint_err_max_deg": 2.717698743426277,
+        "joint_err_rms_deg": 1.4817634612473862,
+        "flange_err_max_mm": 47.74172214779057,
+        "flange_err_rms_mm": 39.460329210676186,
+        "final_joint_err_deg": 2.394782503029436,
+        "final_flange_err_mm": 43.12068776357225,
+        "peak_torque_Nm": [
+          7.46,
+          40.97,
+          22.24,
+          3.11,
+          0.98,
+          0.36
+        ]
+      },
+      "pdg": {
+        "joint_err_max_deg": 0.45587759844556536,
+        "joint_err_rms_deg": 0.09960371811354524,
+        "flange_err_max_mm": 6.137114471160221,
+        "flange_err_rms_mm": 1.6232449580860864,
+        "final_joint_err_deg": 2.900139678528226e-07,
+        "final_flange_err_mm": 2.610526221028245e-06,
+        "peak_torque_Nm": [
+          7.45,
+          40.34,
+          21.11,
+          2.72,
+          0.98,
+          0.36
+        ]
+      },
+      "ctc": {
+        "joint_err_max_deg": 0.01715672353079717,
+        "joint_err_rms_deg": 0.0035881326549661225,
+        "flange_err_max_mm": 0.21434473275383184,
+        "flange_err_rms_mm": 0.059388906233927806,
+        "final_joint_err_deg": 3.8861569208805803e-08,
+        "final_flange_err_mm": 9.225327500524342e-08,
+        "peak_torque_Nm": [
+          7.0,
+          40.09,
+          21.11,
+          2.72,
+          0.98,
+          0.32
+        ]
+      }
+    },
+    "task": {
+      "pd": {
+        "joint_err_max_deg": 2.4542152400674917,
+        "joint_err_rms_deg": 1.4424299953906121,
+        "flange_err_max_mm": 44.10275173665662,
+        "flange_err_rms_mm": 40.398467016465304,
+        "final_joint_err_deg": 2.3947824889993097,
+        "final_flange_err_mm": 43.1206891680179,
+        "peak_torque_Nm": [
+          1.62,
+          39.92,
+          22.24,
+          3.11,
+          0.1,
+          0.15
+        ]
+      },
+      "pdg": {
+        "joint_err_max_deg": 0.18893800780832543,
+        "joint_err_rms_deg": 0.03911968239869428,
+        "flange_err_max_mm": 2.2238351542257964,
+        "flange_err_rms_mm": 0.7802466340658227,
+        "final_joint_err_deg": 8.626848734692435e-08,
+        "final_flange_err_mm": 4.042531112831752e-07,
+        "peak_torque_Nm": [
+          1.66,
+          39.84,
+          19.64,
+          2.54,
+          0.11,
+          0.15
+        ]
+      },
+      "ctc": {
+        "joint_err_max_deg": 0.01088124408371461,
+        "joint_err_rms_deg": 0.002198915493428832,
+        "flange_err_max_mm": 0.08021146509231478,
+        "flange_err_rms_mm": 0.031042084011876542,
+        "final_joint_err_deg": 3.879035022837847e-08,
+        "final_flange_err_mm": 9.344545540362123e-08,
+        "peak_torque_Nm": [
+          1.65,
+          39.72,
+          19.62,
+          2.53,
+          0.11,
+          0.14
+        ]
+      }
+    }
+  },
+  "torque_terms_joint_test": {
+    "joint1": {
+      "inertia_max": 7.005597818877414,
+      "coriolis_max": 0.9354389402722354,
+      "gravity_max": 0.0
+    },
+    "joint2": {
+      "inertia_max": 3.0626332955389524,
+      "coriolis_max": 1.716122281129022,
+      "gravity_max": 37.036819619767165
+    },
+    "joint3": {
+      "inertia_max": 1.385798932410331,
+      "coriolis_max": 1.2477373917086172,
+      "gravity_max": 21.12239231936816
+    },
+    "joint4": {
+      "inertia_max": 0.15064462342322904,
+      "coriolis_max": 0.2378852199774407,
+      "gravity_max": 2.7072562565327765
+    },
+    "joint5": {
+      "inertia_max": 0.3233991064333183,
+      "coriolis_max": 0.07263570755658204,
+      "gravity_max": 0.975477919938847
+    },
+    "joint6": {
+      "inertia_max": 0.3000161297000237,
+      "coriolis_max": 0.00010134087534892289,
+      "gravity_max": 0.0003536293105170684
+    }
+  },
+  "robustness": {
+    "nominal": {
+      "pdg": {
+        "joint_err_max_deg": 0.45587759844556536,
+        "joint_err_rms_deg": 0.0996037181135452,
+        "flange_err_max_mm": 6.137114471160221,
+        "flange_err_rms_mm": 1.6232449580860857,
+        "final_joint_err_deg": 2.9000763218789713e-07,
+        "final_flange_err_mm": 2.6104837282643625e-06,
+        "peak_torque_Nm": [
+          7.45,
+          40.34,
+          21.11,
+          2.72,
+          0.98,
+          0.36
+        ]
+      },
+      "ctc": {
+        "joint_err_max_deg": 0.01715672353079717,
+        "joint_err_rms_deg": 0.003588132654966048,
+        "flange_err_max_mm": 0.21434473275383184,
+        "flange_err_rms_mm": 0.05938890623392782,
+        "final_joint_err_deg": 3.88615183199309e-08,
+        "final_flange_err_mm": 9.22532731564758e-08,
+        "peak_torque_Nm": [
+          7.0,
+          40.09,
+          21.11,
+          2.72,
+          0.98,
+          0.32
+        ]
+      },
+      "ctci": {
+        "joint_err_max_deg": 0.020602023123306824,
+        "joint_err_rms_deg": 0.00278740859734815,
+        "flange_err_max_mm": 0.2178724015517556,
+        "flange_err_rms_mm": 0.04947756627630889,
+        "final_joint_err_deg": 1.4081927861618117e-06,
+        "final_flange_err_mm": 9.328120905659615e-06,
+        "peak_torque_Nm": [
+          7.0,
+          40.09,
+          21.11,
+          2.72,
+          0.98,
+          0.32
+        ]
+      }
+    },
+    "hidden 2 kg payload": {
+      "pdg": {
+        "joint_err_max_deg": 3.079611357464736,
+        "joint_err_rms_deg": 1.1163057540607209,
+        "flange_err_max_mm": 23.173705305753998,
+        "flange_err_rms_mm": 19.855054694002536,
+        "final_joint_err_deg": 1.4977382715178547,
+        "final_flange_err_mm": 19.146576351434575,
+        "peak_torque_Nm": [
+          11.0,
+          52.76,
+          30.71,
+          5.71,
+          3.74,
+          0.36
+        ]
+      },
+      "ctc": {
+        "joint_err_max_deg": 2.7301670725944884,
+        "joint_err_rms_deg": 0.8155007198208811,
+        "flange_err_max_mm": 14.842905177808472,
+        "flange_err_rms_mm": 12.662114304276999,
+        "final_joint_err_deg": 0.7879275892872029,
+        "final_flange_err_mm": 11.648631603638277,
+        "peak_torque_Nm": [
+          10.05,
+          52.56,
+          30.87,
+          5.79,
+          3.75,
+          0.32
+        ]
+      },
+      "ctci": {
+        "joint_err_max_deg": 1.0625084248557883,
+        "joint_err_rms_deg": 0.13056691222974842,
+        "flange_err_max_mm": 9.271365326404513,
+        "flange_err_rms_mm": 1.496949055425938,
+        "final_joint_err_deg": 0.00035318501120825145,
+        "final_flange_err_mm": 0.0018562100763585643,
+        "peak_torque_Nm": [
+          10.19,
+          52.68,
+          31.13,
+          5.91,
+          3.92,
+          0.32
+        ]
+      }
+    },
+    "upper arm + forearm 20 % heavier": {
+      "pdg": {
+        "joint_err_max_deg": 0.48659602019127635,
+        "joint_err_rms_deg": 0.12296260274398604,
+        "flange_err_max_mm": 7.456130113351087,
+        "flange_err_rms_mm": 2.719792802389427,
+        "final_joint_err_deg": 0.14690771828649477,
+        "final_flange_err_mm": 2.346348988147722,
+        "peak_torque_Nm": [
+          7.96,
+          43.96,
+          21.98,
+          2.72,
+          0.98,
+          0.36
+        ]
+      },
+      "ctc": {
+        "joint_err_max_deg": 0.31850198275379676,
+        "joint_err_rms_deg": 0.10919929265615042,
+        "flange_err_max_mm": 1.9039796999325749,
+        "flange_err_rms_mm": 1.3588035053878165,
+        "final_joint_err_deg": 0.16676220262584657,
+        "final_flange_err_mm": 1.5722574429222687,
+        "peak_torque_Nm": [
+          7.46,
+          43.69,
+          21.98,
+          2.72,
+          0.98,
+          0.32
+        ]
+      },
+      "ctci": {
+        "joint_err_max_deg": 0.12311661454159571,
+        "joint_err_rms_deg": 0.01440535414371866,
+        "flange_err_max_mm": 1.1587152097919147,
+        "flange_err_rms_mm": 0.19708341224566484,
+        "final_joint_err_deg": 3.5582468984424944e-06,
+        "final_flange_err_mm": 1.5666190855699367e-05,
+        "peak_torque_Nm": [
+          7.44,
+          43.56,
+          21.99,
+          2.72,
+          0.98,
+          0.32
+        ]
+      }
+    },
+    "250 Hz loop + 4 ms delay (like ROS 2)": {
+      "pdg": {
+        "joint_err_max_deg": 0.45773148183025075,
+        "joint_err_rms_deg": 0.09977281721562939,
+        "flange_err_max_mm": 6.161861324158099,
+        "flange_err_rms_mm": 1.6265194789344086,
+        "final_joint_err_deg": 9.213512223463361e-08,
+        "final_flange_err_mm": 6.875917520338194e-07,
+        "peak_torque_Nm": [
+          7.46,
+          40.33,
+          21.15,
+          2.72,
+          0.98,
+          0.36
+        ]
+      },
+      "ctc": {
+        "joint_err_max_deg": 0.0484434022674069,
+        "joint_err_rms_deg": 0.00528610475485631,
+        "flange_err_max_mm": 0.8432265215988516,
+        "flange_err_rms_mm": 0.10140546276804609,
+        "final_joint_err_deg": 3.957973845588026e-08,
+        "final_flange_err_mm": 8.620414299347517e-08,
+        "peak_torque_Nm": [
+          7.63,
+          40.09,
+          22.5,
+          2.82,
+          0.98,
+          0.4
+        ]
+      },
+      "ctci": {
+        "joint_err_max_deg": 0.04810699982522751,
+        "joint_err_rms_deg": 0.004591360380883668,
+        "flange_err_max_mm": 0.8374158169908219,
+        "flange_err_rms_mm": 0.09709448358154091,
+        "final_joint_err_deg": 1.608147577276148e-05,
+        "final_flange_err_mm": 0.00010596894205913732,
+        "peak_torque_Nm": [
+          7.6,
+          40.07,
+          22.51,
+          2.83,
+          0.98,
+          0.4
+        ]
+      }
+    }
+  },
+  "sorting": {
+    "sorted": {
+      "red": 2,
+      "green": 2,
+      "blue": 2
+    },
+    "time_s": 71.45000000001488,
+    "moving_joint_err_max_deg": 0.04763478383157475,
+    "moving_flange_err_max_mm": 0.6150196348718019,
+    "grasp_joint_err_max_deg": 0.5143004913253753,
+    "grasp_flange_err_max_mm": 4.511270424981765,
+    "part_positions": {
+      "env_part_1": [
+        0.55,
+        0.25,
+        0.04
+      ],
+      "env_part_2": [
+        0.55,
+        -0.35,
+        0.04
+      ],
+      "env_part_3": [
+        0.55,
+        -0.05,
+        0.04
+      ],
+      "env_part_4": [
+        0.55,
+        -0.35,
+        0.09
+      ],
+      "env_part_5": [
+        0.55,
+        -0.05,
+        0.09
+      ],
+      "env_part_6": [
+        0.55,
+        0.25,
+        0.09
+      ]
+    }
+  }
+}

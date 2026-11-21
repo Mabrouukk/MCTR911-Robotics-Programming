@@ -34,13 +34,17 @@ MCTR/
 │   ├── code/                # velocity + acceleration kinematics, validation vs MuJoCo sensors, cell environment
 │   ├── report/              # Milestone 3 report + figures
 │   └── videos/              # kinematics validation + GUI videos
+├── Milestone 04/
+│   ├── code/                # Lagrangian dynamics, joint/task-space trajectories, torque control, closed loop via ROS2
+│   ├── report/              # Milestone 4 report + figures
+│   ├── results/             # tracking logs of the ROS2 runs
+│   └── videos/              # trajectory + control validation and application videos
 ├── Challenge 01/            # Robotics Programming Challenge 1: Franka Panda FK + IK (ROS 2 package)
 ├── Challenge 02/            # Robotics Programming Challenge 2: Panda Jacobian, J-dot, trajectory planning
 ├── docker/                  # ROS2 + MuJoCo containerized environment
 └── README.md
 ```
 
-Later milestones (`Milestone 04`) will be added as their own top-level folders following the same pattern.
 
 ## Run it
 
@@ -49,6 +53,7 @@ Later milestones (`Milestone 04`) will be added as their own top-level folders f
 | 1 | `scripts/run_ms1.sh` |
 | 2 | `scripts/run_ms2.sh` runs the colour sorting cell (optionally `sine`, `constant`, `sliders`, or `ik --xyz X Y Z`) |
 | 3 | `scripts/run_ms3.sh` runs the colour sorting in the full environment with live kinematics checks (or `forward` / `inverse` kinematics tests, `validate` / `derive` offline) |
+| 4 | `scripts/run_ms4.sh` runs the colour sorting in torque mode with computed-torque control (or `joint` / `task` test trajectories, controller `ctc` / `ctci` / `pdg` / `pd`, `validate` offline) |
 | Challenge 1 | `scripts/run_ch1.sh` moves the Franka Panda to its IK target (or `verify` for the FK/IK checks) |
 | Challenge 2 | `scripts/run_ch2.sh position` or `velocity` plays the folding trajectory in that control mode (or `verify` for the checks and plots) |
 
