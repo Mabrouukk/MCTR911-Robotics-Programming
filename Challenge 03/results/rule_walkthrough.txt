@@ -1,0 +1,13 @@
+Team 5 controller (g(q) + FLC), joint 2: GE = 0.0523 rad, GDE = 0.7843 rad/s, GU = 40 N m
+error e = 0.03137 rad (1.798 deg), error rate = -0.1961 rad/s
+1. normalise:  E = e/GE = +0.60,  DE = rate/GDE = -0.25
+2. fuzzify:    E  -> MP 0.80, LP 0.20
+               DE -> MN 0.50, S 0.50
+3. rules that fire (strength = mu_E x mu_DE, sum-product):
+     IF error is MP AND rate is MN THEN output is S    strength 0.40
+     IF error is MP AND rate is S  THEN output is MP   strength 0.40
+     IF error is LP AND rate is MN THEN output is MP   strength 0.10
+     IF error is LP AND rate is S  THEN output is LP   strength 0.10
+4. output sets weighted: S 0.40, MP 0.50, LP 0.10
+5. centroid of the summed, scaled triangles: u = +0.350  (= sum(w_k c_k)/sum(w_k) = +0.350)
+6. torque correction = GU x u = +14.00 N m, added to g2(q)

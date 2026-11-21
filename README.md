@@ -41,6 +41,7 @@ MCTR/
 │   └── videos/              # trajectory + control validation and application videos
 ├── Challenge 01/            # Robotics Programming Challenge 1: Franka Panda FK + IK (ROS 2 package)
 ├── Challenge 02/            # Robotics Programming Challenge 2: Panda Jacobian, J-dot, trajectory planning
+├── Challenge 03/            # Robotics Programming Challenge 3: Panda Lagrangian dynamics + fuzzy logic torque control
 ├── docker/                  # ROS2 + MuJoCo containerized environment
 └── README.md
 ```
@@ -56,5 +57,6 @@ MCTR/
 | 4 | `scripts/run_ms4.sh` runs the colour sorting in torque mode with computed-torque control (or `joint` / `task` test trajectories, controller `ctc` / `ctci` / `pdg` / `pd`, `validate` offline) |
 | Challenge 1 | `scripts/run_ch1.sh` moves the Franka Panda to its IK target (or `verify` for the FK/IK checks) |
 | Challenge 2 | `scripts/run_ch2.sh position` or `velocity` plays the folding trajectory in that control mode (or `verify` for the checks and plots) |
+| Challenge 3 | `scripts/run_ch3.sh` runs the folding trajectory in torque mode with model + FLC (or `gravity_flc` (Team 5), `model_only`, `flc_only`, `verify` for the dynamics check and FLC plots) |
 
 Details on the ROS2 (Docker) + MuJoCo (native) setup are in [docker/README.md](docker/README.md).
