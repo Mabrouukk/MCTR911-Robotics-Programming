@@ -1,0 +1,460 @@
+<mujoco model="color_sorting_cell">
+  <asset>
+    <material name="steel" rgba="0.55 0.57 0.6 1"/>
+    <material name="dark_steel" rgba="0.2 0.22 0.25 1"/>
+    <material name="belt" rgba="0.08 0.08 0.08 1"/>
+    <material name="safety_yellow" rgba="0.95 0.8 0.1 1"/>
+    <material name="sensor_lens" rgba="0.9 0.9 1 1" emission="0.6"/>
+    <material name="part_red" rgba="0.85 0.15 0.15 1"/>
+    <material name="part_green" rgba="0.15 0.7 0.25 1"/>
+    <material name="part_blue" rgba="0.15 0.35 0.85 1"/>
+    <material name="bin_red" rgba="0.6 0.15 0.15 1"/>
+    <material name="bin_green" rgba="0.15 0.5 0.2 1"/>
+    <material name="bin_blue" rgba="0.15 0.25 0.6 1"/>
+    <!-- Milestone 3 additions: people, furniture, tools, safety equipment, logistics -->
+    <material name="fence_mesh" rgba="0.25 0.27 0.3 0.35"/>
+    <material name="fence_post" rgba="0.95 0.75 0.05 1"/>
+    <material name="skin" rgba="0.87 0.68 0.55 1"/>
+    <material name="hivis_orange" rgba="1.0 0.45 0.05 1"/>
+    <material name="hivis_yellow" rgba="0.85 0.95 0.1 1"/>
+    <material name="jeans" rgba="0.15 0.22 0.4 1"/>
+    <material name="shirt_blue" rgba="0.2 0.35 0.65 1"/>
+    <material name="shoe" rgba="0.12 0.1 0.08 1"/>
+    <material name="hardhat_white" rgba="0.95 0.95 0.95 1"/>
+    <material name="hardhat_yellow" rgba="1.0 0.85 0.1 1"/>
+    <material name="wood" rgba="0.62 0.45 0.27 1"/>
+    <material name="pallet_wood" rgba="0.75 0.6 0.4 1"/>
+    <material name="cardboard" rgba="0.72 0.55 0.35 1"/>
+    <material name="chair_black" rgba="0.1 0.1 0.12 1"/>
+    <material name="chair_fabric" rgba="0.2 0.25 0.35 1"/>
+    <material name="desk_top" rgba="0.82 0.82 0.8 1"/>
+    <material name="cabinet_grey" rgba="0.78 0.79 0.8 1"/>
+    <material name="hmi_screen" rgba="0.15 0.45 0.9 1" emission="0.8"/>
+    <material name="light_red" rgba="1 0.1 0.1 1" emission="0.3"/>
+    <material name="light_amber" rgba="1 0.65 0.05 1" emission="0.3"/>
+    <material name="light_green" rgba="0.1 1 0.2 1" emission="1"/>
+    <material name="estop_red" rgba="0.85 0.05 0.05 1"/>
+    <material name="extinguisher_red" rgba="0.8 0.05 0.05 1"/>
+    <material name="tool_red" rgba="0.8 0.1 0.1 1"/>
+    <material name="tool_handle" rgba="0.9 0.75 0.1 1"/>
+    <material name="pegboard" rgba="0.55 0.42 0.3 1"/>
+    <material name="sign_black" rgba="0.05 0.05 0.05 1"/>
+    <material name="rack_blue" rgba="0.15 0.3 0.6 1"/>
+    <material name="rack_orange" rgba="0.95 0.45 0.1 1"/>
+    <material name="tote_grey" rgba="0.45 0.5 0.55 1"/>
+  </asset>
+
+  <default>
+    <default class="bin_wall">
+      <geom type="box"/>
+    </default>
+    <default class="decor">
+      <geom contype="0" conaffinity="0"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <body name="pedestal">
+      <geom type="box" pos="0 0 0.2" size="0.12 0.12 0.2" material="dark_steel"/>
+      <geom type="box" pos="0 0 0.01" size="0.2 0.2 0.01" material="steel"/>
+    </body>
+
+    <!-- Accumulating conveyor: parts travel in +x and queue against the end stop at the pick station.
+         The belt itself is static; sim_bridge.py drives the parts that rest on it. -->
+    <body name="conveyor">
+      <geom name="belt" type="box" pos="-0.45 0.6 0.28" size="0.6 0.15 0.02" material="belt"/>
+      <geom type="box" pos="-0.45 0.44 0.31" size="0.6 0.01 0.03" material="steel"/>
+      <geom type="box" pos="-0.45 0.76 0.31" size="0.6 0.01 0.03" material="steel"/>
+      <geom type="cylinder" pos="-1.05 0.6 0.28" zaxis="0 1 0" size="0.02 0.16" material="steel"/>
+      <geom type="cylinder" pos="0.15 0.6 0.28" zaxis="0 1 0" size="0.02 0.16" material="steel"/>
+      <geom name="end_stop" type="box" pos="0.14 0.6 0.33" size="0.01 0.15 0.03" material="safety_yellow"/>
+      <geom type="box" pos="-0.95 0.48 0.13" size="0.025 0.025 0.13" material="steel"/>
+      <geom type="box" pos="-0.95 0.72 0.13" size="0.025 0.025 0.13" material="steel"/>
+      <geom type="box" pos="0.05 0.48 0.13" size="0.025 0.025 0.13" material="steel"/>
+      <geom type="box" pos="0.05 0.72 0.13" size="0.025 0.025 0.13" material="steel"/>
+    </body>
+
+    <!-- Colour sensor looking across the belt at the pick station. -->
+    <body name="color_sensor" childclass="decor">
+      <geom type="box" pos="0.105 0.8 0.18" size="0.01 0.01 0.18" material="steel"/>
+      <geom type="box" pos="0.105 0.79 0.36" size="0.025 0.02 0.02" material="dark_steel"/>
+      <geom type="cylinder" pos="0.105 0.77 0.36" zaxis="0 1 0" size="0.008 0.002" material="sensor_lens"/>
+    </body>
+
+    <!-- One bin per colour, open at the top. -->
+    <body name="bin_red" pos="0.55 0.25 0" childclass="bin_wall">
+      <geom pos="0 0 0.01" size="0.12 0.12 0.01" material="bin_red"/>
+      <geom pos="0.115 0 0.125" size="0.005 0.12 0.125" material="bin_red"/>
+      <geom pos="-0.115 0 0.125" size="0.005 0.12 0.125" material="bin_red"/>
+      <geom pos="0 0.115 0.125" size="0.11 0.005 0.125" material="bin_red"/>
+      <geom pos="0 -0.115 0.125" size="0.11 0.005 0.125" material="bin_red"/>
+    </body>
+    <body name="bin_green" pos="0.55 -0.05 0" childclass="bin_wall">
+      <geom pos="0 0 0.01" size="0.12 0.12 0.01" material="bin_green"/>
+      <geom pos="0.115 0 0.125" size="0.005 0.12 0.125" material="bin_green"/>
+      <geom pos="-0.115 0 0.125" size="0.005 0.12 0.125" material="bin_green"/>
+      <geom pos="0 0.115 0.125" size="0.11 0.005 0.125" material="bin_green"/>
+      <geom pos="0 -0.115 0.125" size="0.11 0.005 0.125" material="bin_green"/>
+    </body>
+    <body name="bin_blue" pos="0.55 -0.35 0" childclass="bin_wall">
+      <geom pos="0 0 0.01" size="0.12 0.12 0.01" material="bin_blue"/>
+      <geom pos="0.115 0 0.125" size="0.005 0.12 0.125" material="bin_blue"/>
+      <geom pos="-0.115 0 0.125" size="0.005 0.12 0.125" material="bin_blue"/>
+      <geom pos="0 0.115 0.125" size="0.11 0.005 0.125" material="bin_blue"/>
+      <geom pos="0 -0.115 0.125" size="0.11 0.005 0.125" material="bin_blue"/>
+    </body>
+
+    <body name="floor_markings" childclass="decor">
+      <geom type="box" pos="-0.15 0.95 0.001" size="1.05 0.02 0.001" material="safety_yellow"/>
+      <geom type="box" pos="-0.15 -0.6 0.001" size="1.05 0.02 0.001" material="safety_yellow"/>
+      <geom type="box" pos="0.9 0.175 0.001" size="0.02 0.795 0.001" material="safety_yellow"/>
+      <geom type="box" pos="-1.2 0.175 0.001" size="0.02 0.795 0.001" material="safety_yellow"/>
+    </body>
+
+    <!-- 5 cm parts in mixed colour order; the first one reaches the pick station after a few seconds. -->
+    <body name="part_1" pos="-0.25 0.6 0.326">
+      <freejoint/>
+      <geom type="box" size="0.025 0.025 0.025" mass="0.1" material="part_red"/>
+    </body>
+    <body name="part_2" pos="-0.4 0.6 0.326">
+      <freejoint/>
+      <geom type="box" size="0.025 0.025 0.025" mass="0.1" material="part_blue"/>
+    </body>
+    <body name="part_3" pos="-0.55 0.6 0.326">
+      <freejoint/>
+      <geom type="box" size="0.025 0.025 0.025" mass="0.1" material="part_green"/>
+    </body>
+    <body name="part_4" pos="-0.7 0.6 0.326">
+      <freejoint/>
+      <geom type="box" size="0.025 0.025 0.025" mass="0.1" material="part_blue"/>
+    </body>
+    <body name="part_5" pos="-0.85 0.6 0.326">
+      <freejoint/>
+      <geom type="box" size="0.025 0.025 0.025" mass="0.1" material="part_green"/>
+    </body>
+    <body name="part_6" pos="-1.0 0.6 0.326">
+      <freejoint/>
+      <geom type="box" size="0.025 0.025 0.025" mass="0.1" material="part_red"/>
+    </body>
+
+    <!-- ================= Milestone 3: rest of the factory around the cell ================= -->
+    <!-- Everything below is decoration only (contype = conaffinity = 0): it is drawn but never
+         touches the robot, the gripper or the parts. All of it stays outside the yellow floor
+         markings, so nothing new enters the arm's working volume. -->
+
+    <!-- Safety fence around the cell: transparent mesh panels between yellow posts.
+         x from -1.40 to 1.20, y from -0.85 to 1.20. Openings: the infeed conveyor (west side)
+         and an open access gate (east side). -->
+    <body name="fence" childclass="decor">
+      <!-- south side, y = -0.85 -->
+      <geom type="box" pos="-0.1 -0.85 0.85" size="1.3 0.008 0.75" material="fence_mesh"/>
+      <geom type="box" pos="-0.1 -0.85 1.6" size="1.3 0.02 0.02" material="fence_post"/>
+      <geom type="box" pos="-0.1 -0.85 0.1" size="1.3 0.02 0.02" material="fence_post"/>
+      <!-- north side, y = 1.20 -->
+      <geom type="box" pos="-0.1 1.2 0.85" size="1.3 0.008 0.75" material="fence_mesh"/>
+      <geom type="box" pos="-0.1 1.2 1.6" size="1.3 0.02 0.02" material="fence_post"/>
+      <geom type="box" pos="-0.1 1.2 0.1" size="1.3 0.02 0.02" material="fence_post"/>
+      <!-- west side, x = -1.40, with a tunnel for the infeed conveyor at y = 0.40 .. 0.80 -->
+      <geom type="box" pos="-1.4 -0.225 0.85" size="0.008 0.625 0.75" material="fence_mesh"/>
+      <geom type="box" pos="-1.4 1.0 0.85" size="0.008 0.2 0.75" material="fence_mesh"/>
+      <geom type="box" pos="-1.4 0.6 1.075" size="0.008 0.2 0.525" material="fence_mesh"/>
+      <geom type="box" pos="-1.4 0.175 1.6" size="0.02 1.025 0.02" material="fence_post"/>
+      <geom type="box" pos="-1.4 0.6 0.55" size="0.02 0.2 0.02" material="fence_post"/>
+      <!-- east side, x = 1.20, solid from y = -0.30 to 1.20; the gate fills -0.85 .. -0.30 -->
+      <geom type="box" pos="1.2 0.45 0.85" size="0.008 0.75 0.75" material="fence_mesh"/>
+      <geom type="box" pos="1.2 0.45 1.6" size="0.02 0.75 0.02" material="fence_post"/>
+      <geom type="box" pos="1.2 0.45 0.1" size="0.02 0.75 0.02" material="fence_post"/>
+      <!-- posts -->
+      <geom type="box" pos="-1.4 -0.85 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="-0.75 -0.85 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="-0.1 -0.85 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="0.55 -0.85 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="1.2 -0.85 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="-1.4 1.2 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="-0.75 1.2 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="-0.1 1.2 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="0.55 1.2 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="1.2 1.2 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="-1.4 -0.2 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="-1.4 0.4 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="-1.4 0.8 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="1.2 -0.3 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <geom type="box" pos="1.2 0.45 0.82" size="0.025 0.025 0.82" material="fence_post"/>
+      <!-- light curtain at the conveyor tunnel: two sensor columns with red emitters -->
+      <geom type="box" pos="-1.45 0.39 0.55" size="0.015 0.015 0.25" material="dark_steel"/>
+      <geom type="box" pos="-1.45 0.81 0.55" size="0.015 0.015 0.25" material="dark_steel"/>
+      <geom type="box" pos="-1.45 0.405 0.55" size="0.01 0.002 0.22" material="light_red"/>
+      <geom type="box" pos="-1.45 0.795 0.55" size="0.01 0.002 0.22" material="light_red"/>
+      <!-- warning sign on the east fence -->
+      <geom type="box" pos="1.215 0.45 1.25" size="0.004 0.16 0.16" material="sign_black"/>
+      <geom type="box" pos="1.22 0.45 1.25" size="0.004 0.14 0.14" material="safety_yellow"/>
+      <geom type="box" pos="1.225 0.45 1.28" size="0.002 0.018 0.07" material="sign_black"/>
+      <geom type="box" pos="1.225 0.45 1.17" size="0.002 0.018 0.018" material="sign_black"/>
+    </body>
+
+    <!-- Access gate on the east side, hinged at (1.20, -0.30) and swung 70 deg open outwards. -->
+    <body name="fence_gate" pos="1.2 -0.3 0" quat="0.8192 0 0 0.5736" childclass="decor">
+      <geom type="box" pos="0 -0.275 0.85" size="0.008 0.25 0.72" material="fence_mesh"/>
+      <geom type="box" pos="0 -0.275 1.57" size="0.02 0.27 0.02" material="fence_post"/>
+      <geom type="box" pos="0 -0.275 0.13" size="0.02 0.27 0.02" material="fence_post"/>
+      <geom type="box" pos="0 -0.535 0.85" size="0.02 0.02 0.74" material="fence_post"/>
+      <geom type="box" pos="0.03 -0.5 1.0" size="0.015 0.01 0.06" material="dark_steel"/>
+    </body>
+
+    <!-- Infeed conveyor: carries parts in from the warehouse side, through the fence tunnel,
+         onto the cell's accumulating conveyor. Drawn only; parts start on the cell belt. -->
+    <body name="infeed_conveyor" childclass="decor">
+      <geom type="box" pos="-1.78 0.6 0.28" size="0.7 0.15 0.02" material="belt"/>
+      <geom type="box" pos="-1.78 0.44 0.31" size="0.7 0.01 0.03" material="steel"/>
+      <geom type="box" pos="-1.78 0.76 0.31" size="0.7 0.01 0.03" material="steel"/>
+      <geom type="cylinder" pos="-2.48 0.6 0.28" zaxis="0 1 0" size="0.02 0.16" material="steel"/>
+      <geom type="box" pos="-1.3 0.48 0.13" size="0.025 0.025 0.13" material="steel"/>
+      <geom type="box" pos="-1.3 0.72 0.13" size="0.025 0.025 0.13" material="steel"/>
+      <geom type="box" pos="-2.4 0.48 0.13" size="0.025 0.025 0.13" material="steel"/>
+      <geom type="box" pos="-2.4 0.72 0.13" size="0.025 0.025 0.13" material="steel"/>
+      <!-- drive motor and gearbox -->
+      <geom type="cylinder" pos="-2.45 0.84 0.28" zaxis="0 1 0" size="0.05 0.06" material="rack_blue"/>
+      <geom type="box" pos="-2.45 0.79 0.28" size="0.04 0.02 0.04" material="dark_steel"/>
+      <!-- feed hopper at the far end -->
+      <geom type="box" pos="-2.33 0.6 0.36" size="0.13 0.13 0.005" material="tote_grey"/>
+      <geom type="box" pos="-2.2 0.6 0.47" size="0.005 0.15 0.12" material="tote_grey"/>
+      <geom type="box" pos="-2.46 0.6 0.47" size="0.005 0.15 0.12" material="tote_grey"/>
+      <geom type="box" pos="-2.33 0.45 0.47" size="0.13 0.005 0.12" material="tote_grey"/>
+      <geom type="box" pos="-2.33 0.75 0.47" size="0.13 0.005 0.12" material="tote_grey"/>
+    </body>
+
+    <!-- Operator station south of the cell: desk with HMI screen, keyboard and e-stop. -->
+    <body name="operator_desk" childclass="decor">
+      <geom type="box" pos="0.25 -1.35 0.74" size="0.6 0.3 0.02" material="desk_top"/>
+      <geom type="box" pos="-0.3 -1.1 0.36" size="0.025 0.025 0.36" material="dark_steel"/>
+      <geom type="box" pos="0.8 -1.1 0.36" size="0.025 0.025 0.36" material="dark_steel"/>
+      <geom type="box" pos="-0.3 -1.6 0.36" size="0.025 0.025 0.36" material="dark_steel"/>
+      <geom type="box" pos="0.8 -1.6 0.36" size="0.025 0.025 0.36" material="dark_steel"/>
+      <!-- HMI monitor facing the operator (screen on the -y side) -->
+      <geom type="cylinder" pos="0.25 -1.15 0.82" size="0.02 0.06" material="dark_steel"/>
+      <geom type="box" pos="0.25 -1.15 0.765" size="0.1 0.07 0.005" material="dark_steel"/>
+      <geom type="box" pos="0.25 -1.15 1.06" size="0.3 0.02 0.19" material="dark_steel"/>
+      <geom type="box" pos="0.25 -1.172 1.06" size="0.28 0.002 0.17" material="hmi_screen"/>
+      <!-- HMI dashboard: title bar, one counter tile per bin colour, a green "running" lamp -->
+      <geom type="box" pos="0.25 -1.176 1.2" size="0.27 0.001 0.025" material="dark_steel"/>
+      <geom type="box" pos="0.08 -1.176 1.06" size="0.06 0.001 0.07" material="part_red"/>
+      <geom type="box" pos="0.25 -1.176 1.06" size="0.06 0.001 0.07" material="part_green"/>
+      <geom type="box" pos="0.42 -1.176 1.06" size="0.06 0.001 0.07" material="part_blue"/>
+      <geom type="box" pos="0.1 -1.176 0.93" size="0.11 0.001 0.015" material="desk_top"/>
+      <geom type="cylinder" pos="0.45 -1.176 0.93" zaxis="0 1 0" size="0.02 0.001" material="light_green"/>
+      <!-- keyboard -->
+      <geom type="box" pos="0.25 -1.42 0.77" size="0.2 0.07 0.01" material="dark_steel"/>
+      <!-- emergency stop: yellow housing, red mushroom button -->
+      <geom type="box" pos="0.7 -1.42 0.785" size="0.05 0.05 0.025" material="safety_yellow"/>
+      <geom type="cylinder" pos="0.7 -1.42 0.82" size="0.035 0.012" material="estop_red"/>
+    </body>
+
+    <!-- Chair 1 + seated operator (facing +y, towards the desk and the cell). -->
+    <body name="operator_chair" pos="0.25 -1.95 0" quat="0.7071 0 0 0.7071" childclass="decor">
+      <geom type="box" pos="0.1 0 0.45" size="0.23 0.23 0.03" material="chair_fabric"/>
+      <geom type="box" pos="-0.15 0 0.8" size="0.03 0.22 0.27" material="chair_fabric"/>
+      <geom type="box" pos="-0.12 0 0.55" size="0.02 0.04 0.1" material="chair_black"/>
+      <geom type="cylinder" pos="0.1 0 0.24" size="0.025 0.2" material="chair_black"/>
+      <geom type="box" pos="0.1 0 0.05" size="0.27 0.025 0.015" material="chair_black"/>
+      <geom type="box" pos="0.1 0 0.05" size="0.025 0.27 0.015" material="chair_black"/>
+      <geom type="sphere" pos="0.37 0 0.025" size="0.025" material="chair_black"/>
+      <geom type="sphere" pos="-0.17 0 0.025" size="0.025" material="chair_black"/>
+      <geom type="sphere" pos="0.1 0.27 0.025" size="0.025" material="chair_black"/>
+      <geom type="sphere" pos="0.1 -0.27 0.025" size="0.025" material="chair_black"/>
+    </body>
+    <body name="operator" pos="0.25 -1.95 0" quat="0.7071 0 0 0.7071" childclass="decor">
+      <!-- thighs on the seat, shins down to the floor -->
+      <geom type="capsule" fromto="0 0.1 0.55 0.42 0.1 0.55" size="0.07" material="jeans"/>
+      <geom type="capsule" fromto="0 -0.1 0.55 0.42 -0.1 0.55" size="0.07" material="jeans"/>
+      <geom type="capsule" fromto="0.44 0.1 0.55 0.46 0.1 0.1" size="0.06" material="jeans"/>
+      <geom type="capsule" fromto="0.44 -0.1 0.55 0.46 -0.1 0.1" size="0.06" material="jeans"/>
+      <geom type="box" pos="0.5 0.1 0.04" size="0.11 0.05 0.04" material="shoe"/>
+      <geom type="box" pos="0.5 -0.1 0.04" size="0.11 0.05 0.04" material="shoe"/>
+      <!-- torso with hi-vis vest -->
+      <geom type="box" pos="-0.02 0 0.86" size="0.12 0.19 0.28" material="hivis_yellow"/>
+      <geom type="capsule" fromto="-0.02 -0.2 1.1 -0.02 0.2 1.1" size="0.07" material="shirt_blue"/>
+      <!-- arms reaching to the keyboard -->
+      <geom type="capsule" fromto="0 0.26 1.08 0.22 0.27 0.86" size="0.05" material="shirt_blue"/>
+      <geom type="capsule" fromto="0 -0.26 1.08 0.22 -0.27 0.86" size="0.05" material="shirt_blue"/>
+      <geom type="capsule" fromto="0.22 0.27 0.86 0.48 0.15 0.82" size="0.045" material="shirt_blue"/>
+      <geom type="capsule" fromto="0.22 -0.27 0.86 0.48 -0.15 0.82" size="0.045" material="shirt_blue"/>
+      <geom type="sphere" pos="0.52 0.13 0.81" size="0.045" material="skin"/>
+      <geom type="sphere" pos="0.52 -0.13 0.81" size="0.045" material="skin"/>
+      <!-- neck, head, hard hat -->
+      <geom type="capsule" fromto="-0.01 0 1.15 0 0 1.22" size="0.05" material="skin"/>
+      <geom type="sphere" pos="0.01 0 1.3" size="0.1" material="skin"/>
+      <geom type="ellipsoid" pos="0.01 0 1.37" size="0.115 0.11 0.07" material="hardhat_white"/>
+      <geom type="cylinder" pos="0.03 0 1.345" size="0.13 0.006" material="hardhat_white"/>
+    </body>
+
+    <!-- Control cabinet next to the desk, with a stack light (green = cell running) and e-stop. -->
+    <body name="control_cabinet" childclass="decor">
+      <geom type="box" pos="1.35 -1.35 0.9" size="0.3 0.2 0.9" material="cabinet_grey"/>
+      <geom type="box" pos="1.35 -1.152 0.95" size="0.002 0.002 0.75" material="dark_steel"/>
+      <geom type="box" pos="1.3 -1.148 1.0" size="0.012 0.006 0.07" material="dark_steel"/>
+      <geom type="box" pos="1.42 -1.148 1.0" size="0.012 0.006 0.07" material="dark_steel"/>
+      <geom type="box" pos="1.55 -1.14 1.4" size="0.05 0.012 0.05" material="safety_yellow"/>
+      <geom type="cylinder" pos="1.55 -1.12 1.4" zaxis="0 1 0" size="0.035 0.012" material="estop_red"/>
+      <!-- stack light tower on top -->
+      <geom type="cylinder" pos="1.15 -1.35 1.84" size="0.04 0.04" material="dark_steel"/>
+      <geom type="cylinder" pos="1.15 -1.35 1.92" size="0.045 0.04" material="light_green"/>
+      <geom type="cylinder" pos="1.15 -1.35 2.0" size="0.045 0.04" material="light_amber"/>
+      <geom type="cylinder" pos="1.15 -1.35 2.08" size="0.045 0.04" material="light_red"/>
+      <geom type="sphere" pos="1.15 -1.35 2.12" size="0.045" material="dark_steel"/>
+    </body>
+
+    <!-- Maintenance workbench east of the cell, with tools on it and a tool board behind it. -->
+    <body name="workbench" childclass="decor">
+      <geom type="box" pos="2.0 0.2 0.9" size="0.35 0.8 0.025" material="wood"/>
+      <geom type="box" pos="1.7 -0.55 0.44" size="0.03 0.03 0.44" material="dark_steel"/>
+      <geom type="box" pos="2.3 -0.55 0.44" size="0.03 0.03 0.44" material="dark_steel"/>
+      <geom type="box" pos="1.7 0.95 0.44" size="0.03 0.03 0.44" material="dark_steel"/>
+      <geom type="box" pos="2.3 0.95 0.44" size="0.03 0.03 0.44" material="dark_steel"/>
+      <geom type="box" pos="2.0 0.2 0.2" size="0.32 0.77 0.012" material="dark_steel"/>
+      <!-- storage tote on the lower shelf -->
+      <geom type="box" pos="2.05 0.6 0.29" size="0.2 0.15 0.08" material="tote_grey"/>
+      <!-- tool board on the wall behind -->
+      <geom type="box" pos="2.42 0.2 1.45" size="0.015 0.8 0.42" material="pegboard"/>
+      <geom type="box" pos="2.39 -0.3 1.55" size="0.008 0.015 0.14" material="steel"/>
+      <geom type="box" pos="2.39 -0.15 1.55" size="0.008 0.012 0.12" material="steel"/>
+      <geom type="box" pos="2.39 0.0 1.5" size="0.008 0.02 0.16" material="tool_red"/>
+      <geom type="box" pos="2.39 0.25 1.6" size="0.008 0.11 0.012" material="steel"/>
+      <geom type="box" pos="2.39 0.5 1.45" size="0.008 0.016 0.18" material="tool_handle"/>
+      <geom type="box" pos="2.39 0.7 1.55" size="0.008 0.05 0.05" material="dark_steel"/>
+    </body>
+    <body name="tools" childclass="decor">
+      <!-- red toolbox -->
+      <geom type="box" pos="2.15 0.75 1.005" size="0.1 0.22 0.08" material="tool_red"/>
+      <geom type="box" pos="2.15 0.75 1.1" size="0.012 0.12 0.012" material="dark_steel"/>
+      <geom type="box" pos="2.15 0.635 1.09" size="0.012 0.012 0.008" material="dark_steel"/>
+      <geom type="box" pos="2.15 0.865 1.09" size="0.012 0.012 0.008" material="dark_steel"/>
+      <!-- wrench: flat handle with an open jaw at each end -->
+      <geom type="box" pos="1.85 0.1 0.93" size="0.012 0.1 0.004" material="steel"/>
+      <geom type="cylinder" pos="1.85 0.21 0.93" size="0.025 0.004" material="steel"/>
+      <geom type="cylinder" pos="1.85 -0.01 0.93" size="0.02 0.004" material="steel"/>
+      <!-- screwdriver: yellow handle, steel shaft -->
+      <geom type="capsule" fromto="1.95 -0.25 0.94 1.95 -0.14 0.94" size="0.016" material="tool_handle"/>
+      <geom type="cylinder" fromto="1.95 -0.14 0.935 1.95 0.0 0.935" size="0.004" material="steel"/>
+      <!-- hammer: wooden handle, steel head -->
+      <geom type="capsule" fromto="2.1 -0.45 0.94 2.1 -0.18 0.94" size="0.014" material="wood"/>
+      <geom type="box" pos="2.1 -0.16 0.95" size="0.06 0.022 0.025" material="dark_steel"/>
+      <!-- spare gripper finger pads and a calibration block -->
+      <geom type="box" pos="1.8 -0.4 0.94" size="0.04 0.04 0.015" material="part_blue"/>
+      <geom type="box" pos="1.82 0.45 0.945" size="0.05 0.03 0.02" material="steel"/>
+    </body>
+
+    <!-- Chair 2: workbench chair (empty), facing the bench. -->
+    <body name="workbench_chair" pos="1.5 -0.4 0" childclass="decor">
+      <geom type="box" pos="0 0 0.45" size="0.22 0.22 0.03" material="chair_fabric"/>
+      <geom type="box" pos="-0.22 0 0.78" size="0.03 0.21 0.25" material="chair_fabric"/>
+      <geom type="box" pos="-0.2 0 0.55" size="0.02 0.04 0.1" material="chair_black"/>
+      <geom type="cylinder" pos="0 0 0.24" size="0.025 0.2" material="chair_black"/>
+      <geom type="box" pos="0 0 0.05" size="0.27 0.025 0.015" material="chair_black"/>
+      <geom type="box" pos="0 0 0.05" size="0.025 0.27 0.015" material="chair_black"/>
+    </body>
+
+    <!-- Chair 3: stool at the north fence. -->
+    <body name="stool" pos="0.6 1.6 0" childclass="decor">
+      <geom type="cylinder" pos="0 0 0.62" size="0.17 0.025" material="chair_black"/>
+      <geom type="capsule" fromto="0.1 0.1 0.6 0.16 0.16 0.0" size="0.015" material="steel"/>
+      <geom type="capsule" fromto="-0.1 0.1 0.6 -0.16 0.16 0.0" size="0.015" material="steel"/>
+      <geom type="capsule" fromto="0.1 -0.1 0.6 0.16 -0.16 0.0" size="0.015" material="steel"/>
+      <geom type="capsule" fromto="-0.1 -0.1 0.6 -0.16 -0.16 0.0" size="0.015" material="steel"/>
+      <!-- footrest ring, drawn as four bars -->
+      <geom type="box" pos="0 0.13 0.3" size="0.13 0.008 0.008" material="steel"/>
+      <geom type="box" pos="0 -0.13 0.3" size="0.13 0.008 0.008" material="steel"/>
+      <geom type="box" pos="0.13 0 0.3" size="0.008 0.13 0.008" material="steel"/>
+      <geom type="box" pos="-0.13 0 0.3" size="0.008 0.13 0.008" material="steel"/>
+    </body>
+
+    <!-- Technician standing at the workbench (facing +x), hands on the bench. -->
+    <body name="technician" pos="1.45 0.2 0" childclass="decor">
+      <geom type="capsule" fromto="0 0.1 0.09 0 0.1 0.86" size="0.065" material="jeans"/>
+      <geom type="capsule" fromto="0 -0.1 0.09 0 -0.1 0.86" size="0.065" material="jeans"/>
+      <geom type="box" pos="0.04 0.1 0.04" size="0.12 0.05 0.04" material="shoe"/>
+      <geom type="box" pos="0.04 -0.1 0.04" size="0.12 0.05 0.04" material="shoe"/>
+      <geom type="box" pos="0 0 1.16" size="0.12 0.2 0.3" material="hivis_orange"/>
+      <geom type="capsule" fromto="0 -0.2 1.42 0 0.2 1.42" size="0.07" material="hivis_orange"/>
+      <geom type="capsule" fromto="0 0.27 1.4 0.2 0.28 1.12" size="0.05" material="shirt_blue"/>
+      <geom type="capsule" fromto="0 -0.27 1.4 0.2 -0.28 1.12" size="0.05" material="shirt_blue"/>
+      <geom type="capsule" fromto="0.2 0.28 1.12 0.43 0.15 0.97" size="0.045" material="shirt_blue"/>
+      <geom type="capsule" fromto="0.2 -0.28 1.12 0.43 -0.15 0.97" size="0.045" material="shirt_blue"/>
+      <geom type="sphere" pos="0.47 0.14 0.96" size="0.045" material="skin"/>
+      <geom type="sphere" pos="0.47 -0.14 0.96" size="0.045" material="skin"/>
+      <geom type="capsule" fromto="0 0 1.47 0.01 0 1.53" size="0.05" material="skin"/>
+      <geom type="sphere" pos="0.02 0 1.61" size="0.1" material="skin"/>
+      <geom type="ellipsoid" pos="0.02 0 1.68" size="0.115 0.11 0.07" material="hardhat_yellow"/>
+      <geom type="cylinder" pos="0.04 0 1.655" size="0.13 0.006" material="hardhat_yellow"/>
+    </body>
+
+    <!-- Worker walking along the north fence (facing -x), mid-stride. -->
+    <body name="walking_worker" pos="-0.4 1.65 0" quat="0 0 0 1" childclass="decor">
+      <geom type="capsule" fromto="0 0.1 0.86 0.2 0.1 0.09" size="0.065" material="jeans"/>
+      <geom type="capsule" fromto="0 -0.1 0.86 -0.2 -0.1 0.09" size="0.065" material="jeans"/>
+      <geom type="box" pos="0.25 0.1 0.04" size="0.12 0.05 0.04" material="shoe"/>
+      <geom type="box" pos="-0.17 -0.1 0.04" size="0.12 0.05 0.04" material="shoe"/>
+      <geom type="box" pos="0 0 1.16" size="0.12 0.2 0.3" material="hivis_yellow"/>
+      <geom type="capsule" fromto="0 -0.2 1.42 0 0.2 1.42" size="0.07" material="hivis_yellow"/>
+      <geom type="capsule" fromto="0 0.27 1.4 -0.15 0.28 0.9" size="0.05" material="shirt_blue"/>
+      <geom type="capsule" fromto="0 -0.27 1.4 0.15 -0.28 0.9" size="0.05" material="shirt_blue"/>
+      <geom type="sphere" pos="-0.17 0.28 0.85" size="0.045" material="skin"/>
+      <geom type="sphere" pos="0.17 -0.28 0.85" size="0.045" material="skin"/>
+      <!-- carrying a clipboard in the right hand -->
+      <geom type="box" pos="0.2 -0.3 0.86" size="0.12 0.005 0.09" material="desk_top"/>
+      <geom type="capsule" fromto="0 0 1.47 0.01 0 1.53" size="0.05" material="skin"/>
+      <geom type="sphere" pos="0.02 0 1.61" size="0.1" material="skin"/>
+      <geom type="ellipsoid" pos="0.02 0 1.68" size="0.115 0.11 0.07" material="hardhat_white"/>
+      <geom type="cylinder" pos="0.04 0 1.655" size="0.13 0.006" material="hardhat_white"/>
+    </body>
+
+    <!-- Pallet with cardboard boxes of parts waiting to go onto the infeed. -->
+    <body name="pallet" pos="-2.1 -0.35 0" childclass="decor">
+      <geom type="box" pos="0 0 0.135" size="0.4 0.6 0.015" material="pallet_wood"/>
+      <geom type="box" pos="0 0 0.01" size="0.4 0.6 0.01" material="pallet_wood"/>
+      <geom type="box" pos="-0.35 -0.55 0.07" size="0.05 0.05 0.05" material="pallet_wood"/>
+      <geom type="box" pos="0 -0.55 0.07" size="0.05 0.05 0.05" material="pallet_wood"/>
+      <geom type="box" pos="0.35 -0.55 0.07" size="0.05 0.05 0.05" material="pallet_wood"/>
+      <geom type="box" pos="-0.35 0 0.07" size="0.05 0.05 0.05" material="pallet_wood"/>
+      <geom type="box" pos="0 0 0.07" size="0.05 0.05 0.05" material="pallet_wood"/>
+      <geom type="box" pos="0.35 0 0.07" size="0.05 0.05 0.05" material="pallet_wood"/>
+      <geom type="box" pos="-0.35 0.55 0.07" size="0.05 0.05 0.05" material="pallet_wood"/>
+      <geom type="box" pos="0 0.55 0.07" size="0.05 0.05 0.05" material="pallet_wood"/>
+      <geom type="box" pos="0.35 0.55 0.07" size="0.05 0.05 0.05" material="pallet_wood"/>
+      <geom type="box" pos="-0.19 -0.29 0.27" size="0.18 0.27 0.12" material="cardboard"/>
+      <geom type="box" pos="0.19 -0.29 0.27" size="0.18 0.27 0.12" material="cardboard"/>
+      <geom type="box" pos="-0.19 0.29 0.27" size="0.18 0.27 0.12" material="cardboard"/>
+      <geom type="box" pos="0.19 0.29 0.27" size="0.18 0.27 0.12" material="cardboard"/>
+      <geom type="box" pos="-0.19 -0.29 0.515" size="0.18 0.27 0.12" material="cardboard"/>
+      <geom type="box" pos="0.19 0.29 0.515" size="0.18 0.27 0.12" material="cardboard"/>
+    </body>
+
+    <!-- Shelving rack for spare parts and empty totes, south-west of the cell. -->
+    <body name="shelving_rack" pos="-1.3 -1.45 0" childclass="decor">
+      <geom type="box" pos="-0.7 -0.2 0.95" size="0.025 0.025 0.95" material="rack_blue"/>
+      <geom type="box" pos="0.7 -0.2 0.95" size="0.025 0.025 0.95" material="rack_blue"/>
+      <geom type="box" pos="-0.7 0.2 0.95" size="0.025 0.025 0.95" material="rack_blue"/>
+      <geom type="box" pos="0.7 0.2 0.95" size="0.025 0.025 0.95" material="rack_blue"/>
+      <geom type="box" pos="0 0 0.08" size="0.7 0.22 0.015" material="rack_orange"/>
+      <geom type="box" pos="0 0 0.65" size="0.7 0.22 0.015" material="rack_orange"/>
+      <geom type="box" pos="0 0 1.2" size="0.7 0.22 0.015" material="rack_orange"/>
+      <geom type="box" pos="0 0 1.75" size="0.7 0.22 0.015" material="rack_orange"/>
+      <geom type="box" pos="-0.4 0 0.2" size="0.2 0.15 0.1" material="cardboard"/>
+      <geom type="box" pos="0.25 0 0.21" size="0.25 0.17 0.11" material="cardboard"/>
+      <geom type="box" pos="-0.45 0 0.74" size="0.18 0.15 0.08" material="tote_grey"/>
+      <geom type="box" pos="0.0 0 0.74" size="0.18 0.15 0.08" material="tote_grey"/>
+      <geom type="box" pos="0.45 0 0.74" size="0.18 0.15 0.08" material="tote_grey"/>
+      <geom type="box" pos="-0.3 0 1.3" size="0.25 0.18 0.09" material="cardboard"/>
+      <geom type="box" pos="0.4 0 1.29" size="0.12 0.12 0.08" material="part_red"/>
+      <geom type="box" pos="0.4 0 1.85" size="0.2 0.15 0.09" material="tote_grey"/>
+    </body>
+
+    <!-- Fire extinguisher at the north-east corner, outside the fence. -->
+    <body name="fire_extinguisher" pos="1.4 1.4 0" childclass="decor">
+      <geom type="cylinder" pos="0 0 0.27" size="0.075 0.25" material="extinguisher_red"/>
+      <geom type="sphere" pos="0 0 0.52" size="0.075" material="extinguisher_red"/>
+      <geom type="cylinder" pos="0 0 0.6" size="0.02 0.03" material="dark_steel"/>
+      <geom type="box" pos="0.04 0 0.64" size="0.05 0.012 0.008" material="dark_steel"/>
+      <geom type="capsule" fromto="-0.02 0 0.6 -0.08 0 0.35" size="0.01" material="sign_black"/>
+    </body>
+  </worldbody>
+</mujoco>

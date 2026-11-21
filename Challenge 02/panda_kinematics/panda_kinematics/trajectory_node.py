@@ -47,7 +47,7 @@ Q_MAX = np.array([ 2.8973,  1.7628,  2.8973, -0.0698,  2.8973,  3.7525,  2.8973]
 # from the robot itself. The planner never uses more than LIMIT_FRACTION of them.
 QD_MAX = np.array([2.175, 2.175, 2.175, 2.175, 2.61, 2.61, 2.61])
 QDD_MAX = np.array([15.0, 7.5, 10.0, 12.5, 15.0, 20.0, 20.0])
-LIMIT_FRACTION = 0.8
+LIMIT_FRACTION = 0.8 #allow bas 80% men el foo2 dol 
 
 # The 'home' keyframe from panda.xml. Used as a fallback IK seed.
 Q_HOME = np.array([0.0, 0.0, 0.0, -1.57079, 0.0, 1.57079, -0.7853])
@@ -55,12 +55,12 @@ Q_HOME = np.array([0.0, 0.0, 0.0, -1.57079, 0.0, 1.57079, -0.7853])
 # IK settings (same as Challenge 1).
 SHOULDER = np.array([0.0, 0.0, 0.333])
 MAX_REACH = np.hypot(0.0825, 0.316) + np.hypot(0.0825, 0.384) + np.hypot(0.088, 0.107)
-IK_POS_TOL = 1e-4
-IK_ROT_TOL = 1e-3
-IK_MAX_ITER = 200
-IK_MAX_STEP = 0.2
-IK_LAMBDA_BAR = 1e-4
-IK_N_RANDOM_SEEDS = 10
+IK_POS_TOL = 1e-4 #emta 22ol i reached it aw ana wslt 
+IK_ROT_TOL = 1e-3 # same bas lel angle 
+IK_MAX_ITER = 200 # el trial betat3te el max trailS
+IK_MAX_STEP = 0.2 #biggest 1 move 
+IK_LAMBDA_BAR = 1e-4 #lama akoon b3eed akhod steps soghayara ad eh 
+IK_N_RANDOM_SEEDS = 10 # lama te fail tebd2 men hetta mokhtalfa 
 
 
 def dh_transform(alpha, a, d, theta):
