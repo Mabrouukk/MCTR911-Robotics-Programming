@@ -14,9 +14,9 @@ When the trajectory is done (plus HOLD seconds) the simulator prints how closely
 tracked the plan and saves the log to results/sim_<tag>.npz.
 
 The node's infrastructure (which we must not change) moves along the plan one sample per
-timer tick. A Python timer at 250 Hz often fires a little late, so the plan then plays back
+timer tick. A Python timer at 100 Hz (TRAJ_DT) can fire a little late, so the plan then plays back
 a bit slower than real time. To measure tracking and not timing, the reference is the plan
-sample of the command being applied: command number n -> plan time (n - 1) x CONTROL_DT.
+sample of the command being applied: command number n -> plan time (n - 1) x TRAJ_DT.
 The playback speed (plan time / real time) is printed separately.
 
     --mass-scale link3=1.2     make a link 20 % heavier than the controller's model thinks
@@ -54,7 +54,7 @@ FINGER_JOINTS = ["finger_joint1", "finger_joint2"]
 
 
 def plan():
-    return cn.plan_trajectory(cn.Q_START, cn.Q_END, cn.TRAJ_DURATION, cn.CONTROL_DT)
+    return cn.plan_trajectory(cn.Q_START, cn.Q_END, cn.TRAJ_DURATION, cn.TRAJ_DT)
 
 
 def build_model(mass_scale=None, show_plan=True):
@@ -249,7 +249,7 @@ def main():
                                "dq": data.qvel[arm_dof + finger_dof].tolist()})
 
         if t0 is not None and not done:
-            tau = (n_cmd - 1) * cn.CONTROL_DT          # plan time of the command being applied
+            tau = (n_cmd - 1) * cn.TRAJ_DT          # plan time of the command being applied
             real = data.time - t0
             if tau - last_log >= LOG_PERIOD:
                 last_log = tau
@@ -272,9 +272,9 @@ def main():
                       f"({min(tau, log.T + HOLD) / real:.3f} x real time, node timer at about "
                       f"{n_cmd / real:.0f} Hz); real-time factor of the simulation "
                       f"{real / (time.time() - wall_t0):.3f}")
-                if n_cmd / real > 1.2 / cn.CONTROL_DT:
+                if n_cmd / real > 1.2 / cn.TRAJ_DT:
                     print(f"  WARNING: {n_cmd / real:.0f} commands/s, more than one controller sends "
-                          f"({1 / cn.CONTROL_DT:.0f}/s). Is an old controller_node still running in another "
+                          f"({1 / cn.TRAJ_DT:.0f}/s). Is an old controller_node still running in another "
                           f"container? ROS 2 nodes in different containers see each other.")
                 os.makedirs(RESULTS, exist_ok=True)
                 path = os.path.join(RESULTS, f"sim_{args.tag}.npz")

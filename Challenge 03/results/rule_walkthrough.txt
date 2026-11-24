@@ -1,5 +1,5 @@
-Team 5 controller (g(q) + FLC), joint 2: GE = 0.0523 rad, GDE = 0.7843 rad/s, GU = 40 N m
-error e = 0.03137 rad (1.798 deg), error rate = -0.1961 rad/s
+Team 5 controller (g(q) + FLC), joint 2: GE = 0.2092 rad, GDE = 1.5686 rad/s, GU = 40 N m
+error e = 0.12549 rad (7.190 deg), error rate = -0.3922 rad/s
 1. normalise:  E = e/GE = +0.60,  DE = rate/GDE = -0.25
 2. fuzzify:    E  -> MP 0.80, LP 0.20
                DE -> MN 0.50, S 0.50

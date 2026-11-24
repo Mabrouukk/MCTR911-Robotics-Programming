@@ -5,7 +5,7 @@ Challenge 3 (b): the fuzzy controller, studied and plotted.
 
 Uses the logs of the live ROS 2 runs (results/sim_ros_<mode>.npz, written by panda_sim.py when you
 run scripts/run_ch3.sh <mode>) for desired vs actual, and an offline loop (same MuJoCo model,
-250 Hz, two control periods of delay like the ROS 2 loop) for the design studies.
+100 Hz like the template, one control period of delay like the ROS 2 loop) for the design studies.
 
 Figures (results/):
     flc_membership.png      the five sets on the inputs and the output
@@ -56,27 +56,32 @@ def hand_error(a):
 
 
 # ---------------------------------------------------------------------------
-# Offline loop: the controller of controller_node.py on the same MuJoCo model, 250 Hz, delay.
+# Offline loop: the controller of controller_node.py on the same MuJoCo model, 100 Hz, delay.
 # ---------------------------------------------------------------------------
-def run_offline(mode, mass_scale=None, delay=2, hold=1.0):
+def run_offline(mode, mass_scale=None, delay=1, hold=1.0):
     cn.CONTROL_MODE = mode
     cn._prev_error = None
     model = ps.build_model(mass_scale, show_plan=False)
     data = mujoco.MjData(model)
     ps.reset_to_start(model, data)
     t, Q, dQ, ddQ = ps.plan()
-    every = int(round(cn.CONTROL_DT / model.opt.timestep))
-    first = cn.compute_torques(data.qpos[:7].copy(), data.qvel[:7].copy(), Q[0], dQ[0], ddQ[0], cn.CONTROL_DT)
+    every = int(round(cn.TRAJ_DT / model.opt.timestep))
+    first = cn.compute_torques(data.qpos[:7].copy(), data.qvel[:7].copy(), Q[0], dQ[0], ddQ[0])
     cn._prev_error = None
     pending = [first] * delay                      # brakes hold the arm until the first command
     rows = []
-    for k in range(len(t) + int(hold / cn.CONTROL_DT)):
+    for k in range(len(t) + int(hold / cn.TRAJ_DT)):
         q, dq = data.qpos[:7].copy(), data.qvel[:7].copy()
         i = min(k, len(t) - 1)
-        qd, dqd, ddqd = (Q[i], dQ[i], ddQ[i]) if k < len(t) else (cn.Q_END, np.zeros(7), np.zeros(7))
-        pending.append(cn.compute_torques(q, dq, qd, dqd, ddqd, cn.CONTROL_DT))
+        if k < len(t):
+            qd, dqd, ddqd = Q[i], dQ[i], ddQ[i]
+            pending.append(cn.compute_torques(q, dq, qd, dqd, ddqd))
+        else:
+            # like the template's control_loop after the plan: hold with C q_dot + g at q_dot = 0, i.e. g(q)
+            qd = cn.Q_END
+            pending.append(cn.compute_dynamics(q, np.zeros(7), np.zeros(7))[1])
         tau = pending.pop(0)
-        rows.append(np.concatenate([[k * cn.CONTROL_DT], q, qd, tau]))
+        rows.append(np.concatenate([[k * cn.TRAJ_DT], q, qd, tau]))
         for _ in range(every):
             data.ctrl[:7] = tau
             mujoco.mj_step(model, data)
@@ -161,7 +166,7 @@ def fig_tracking(runs):
     axes[0, 0].set_ylim(lo - 10, 70)
     axes[0, 1].set_ylim(-200, 0)
     axes[0, 0].legend(fontsize=8, loc="lower left")
-    fig.text(0.5, -0.01, "Model only leaves the plotted range within a second (it ends 146° off); error axes clipped at ±1.5°.",
+    fig.text(0.5, -0.01, "Model only leaves the plotted range within a second (it ends 147° off); error axes clipped at ±1.5°.",
              ha="center", fontsize=8, color=MUTED)
     save(fig, "tracking_desired_vs_actual.png")
 
@@ -239,7 +244,8 @@ def fig_chatter():
     cn.FLC_GAINS["FIRST"] = dict(GE=gu / (m_ii * 400), GDE=gu / (2 * m_ii * 20), GU=gu)
     cn.INFERENCE = "min-max"
 
-    def first_design(q, dq, q_des, dq_des, ddq_des, dt):
+    def first_design(q, dq, q_des, dq_des, ddq_des):
+        dt = cn.TRAJ_DT
         # tau = M q_ddot_des + h + FLC torque, FLC scaled with M_ii, min-max inference
         global_prev = cn._prev_error
         error = np.asarray(q_des) - q
