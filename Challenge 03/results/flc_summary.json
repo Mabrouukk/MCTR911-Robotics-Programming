@@ -5,65 +5,65 @@
   },
   "live": {
     "model_flc": {
-      "joint_max_deg": 0.5377996906235482,
-      "hand_max_mm": 2.2071115973557918,
-      "hand_rms_mm": 1.4089106938911051,
-      "hand_final_mm": 3.6281251104521294e-10,
-      "joint_final_deg": 6.113081931524133e-10
+      "joint_max_deg": 0.4087643542989555,
+      "hand_max_mm": 1.961763938286957,
+      "hand_rms_mm": 1.1485234999763927,
+      "hand_final_mm": 0.18492800134124407,
+      "joint_final_deg": 0.028797173827490696
     },
     "gravity_flc": {
-      "joint_max_deg": 0.7759491071162715,
-      "hand_max_mm": 4.277837440542237,
-      "hand_rms_mm": 2.082711202049303,
-      "hand_final_mm": 7.196207358124796e-07,
-      "joint_final_deg": 8.712758061082509e-08
+      "joint_max_deg": 1.219639106076153,
+      "hand_max_mm": 15.416977277489336,
+      "hand_rms_mm": 7.746636456607812,
+      "hand_final_mm": 7.855356001078427,
+      "joint_final_deg": 0.8244857073412638
     },
     "flc_only": {
-      "joint_max_deg": 7.386785625806717,
-      "hand_max_mm": 128.92099546991165,
-      "hand_rms_mm": 74.66034459327321,
-      "hand_final_mm": 51.43444206348958,
-      "joint_final_deg": 5.64490546957283
+      "joint_max_deg": 23.98868955784922,
+      "hand_max_mm": 434.81823390377207,
+      "hand_rms_mm": 257.89288798429936,
+      "hand_final_mm": 62.03721777106334,
+      "joint_final_deg": 6.240191479073146
     },
     "model_only": {
-      "joint_max_deg": 148.7836753215745,
-      "hand_max_mm": 548.8310373680799,
-      "hand_rms_mm": 315.3506605281894,
-      "hand_final_mm": 531.9489424908785,
-      "joint_final_deg": 145.86849803076117
+      "joint_max_deg": 149.6068413768604,
+      "hand_max_mm": 554.8348899209125,
+      "hand_rms_mm": 315.14685602619215,
+      "hand_final_mm": 536.4247061229256,
+      "joint_final_deg": 147.0964348307177
     },
     "model_flc_mass20": {
-      "joint_max_deg": 0.7369348567343544,
-      "hand_max_mm": 3.649748007023062,
-      "hand_rms_mm": 1.9524750964070412,
-      "hand_final_mm": 1.0163427483474943,
-      "joint_final_deg": 0.1601343338195549
+      "joint_max_deg": 1.645742361501725,
+      "hand_max_mm": 8.55906678709293,
+      "hand_rms_mm": 4.976266638662272,
+      "hand_final_mm": 145.16644160176165,
+      "joint_final_deg": 50.16973448499324
     },
     "gravity_flc_mass20": {
-      "joint_max_deg": 2.5058311270762,
-      "hand_max_mm": 22.98926498120385,
-      "hand_rms_mm": 12.914213197893195,
-      "hand_final_mm": 8.7996164899814,
-      "joint_final_deg": 0.9760504728479192
+      "joint_max_deg": 5.267673668762365,
+      "hand_max_mm": 93.84318795004306,
+      "hand_rms_mm": 50.67784077859191,
+      "hand_final_mm": 145.47922564233886,
+      "joint_final_deg": 52.90471789484677
     }
   },
   "chatter_mean_abs_dtau_Nm": {
     "first_design": [
-      5.184,
-      5.17,
-      1.802,
-      2.215,
-      0.255,
-      0.282,
-      0.043
+      5.879,
+      5.928,
+      2.813,
+      3.817,
+      0.719,
+      0.981,
+      0.126
     ],
     "final": [
-      0.001,
-      0.043,
-      0.001,
+      0.002,
+      0.107,
       0.003,
+      0.006,
       0.0,
-      0.0,
+      0.001,
       0.0
     ]
   }

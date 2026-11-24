@@ -220,11 +220,13 @@ def coriolis_matrix(q, dq, links=LINKS):
     return 0.5 * (np.einsum("ikj,i->kj", D, dq) + np.einsum("jki,i->kj", D, dq) - np.einsum("kij,i->kj", D, dq))
 
 
-def compute_dynamics(q, dq):
+def compute_dynamics(q, dq, ddq=None):
     """
     Lagrangian dynamics of the Panda (7 links + hand).
 
     q, dq: numpy arrays of 7 joint angles (rad) and velocities (rad/s).
+    ddq:   joint accelerations. The template passes them, but M and C q_dot + g do not
+           depend on them (the torque is M @ ddq + h), so they are not used here.
 
     Returns:
         M: (7, 7) mass / inertia matrix M(q)
@@ -347,15 +349,21 @@ def flc_scaling(GU, wn, inertia=1.0):
     return dict(GE=GU / (inertia * wn**2), GDE=GU / (2 * inertia * wn), GU=GU)
 
 
+# wn is limited by the loop rate. The template runs the loop at 100 Hz (TRAJ_DT = 0.01 s), and
+# through ROS 2 the torque reaches the arm about one period late. A delay of d seconds eats phase,
+# so wn has to stay well below 1/d. Our first tuning was for a 250 Hz loop (wn = 40 and 30);
+# at 100 Hz those values oscillated (model + FLC: 10.7 deg error offline). We swept wn offline
+# with 1 and 2 periods of delay and took the largest value that stays calm with 2 periods:
 FLC_GAINS = {
-    # Model + FLC: corrective acceleration up to 30 rad/s^2 on every joint, wn = 40 rad/s.
-    "MODEL_FLC":   flc_scaling(GU=np.full(7, 30.0), wn=40.0),
+    # Model + FLC: corrective acceleration up to 30 rad/s^2 on every joint, wn = 20 rad/s
+    # (25 oscillated with 2 periods of delay).
+    "MODEL_FLC":   flc_scaling(GU=np.full(7, 30.0), wn=20.0),
     # Team 5, g(q) + FLC: the FLC alone drives the motion, so it must also make the inertia and
-    # Coriolis torques. Output in N m.
-    "GRAVITY_FLC": flc_scaling(GU=[40, 40, 20, 30, 6, 6, 6], wn=30.0, inertia=I_EFF_MIN),
+    # Coriolis torques. Output in N m. wn = 15 rad/s (17 already started to chatter).
+    "GRAVITY_FLC": flc_scaling(GU=[40, 40, 20, 30, 6, 6, 6], wn=15.0, inertia=I_EFF_MIN),
     # FLC with no model at all (for the debate): it must also hold the arm against gravity,
     # so it gets the full torque range.
-    "FLC_ONLY":    flc_scaling(GU=[87, 87, 87, 87, 12, 12, 12], wn=30.0, inertia=I_EFF_MIN),
+    "FLC_ONLY":    flc_scaling(GU=[87, 87, 87, 87, 12, 12, 12], wn=15.0, inertia=I_EFF_MIN),
 }
 
 # Which law compute_torques() uses:
@@ -383,7 +391,7 @@ def fuzzy_controller(error, delta_error, dt):
     return gains["GU"] * fuzzy_inference(E, DE)
 
 
-def compute_torques(q, dq, q_des, dq_des, ddq_des, dt):
+def compute_torques(q, dq, q_des, dq_des, ddq_des):
     """
     Decide the 7 joint torques for this control step.
 
@@ -391,6 +399,7 @@ def compute_torques(q, dq, q_des, dq_des, ddq_des, dt):
     the FLC fills the gaps (friction, model errors, disturbances).
     """
     global _prev_error
+    dt = TRAJ_DT          # the template calls us once per TRAJ_DT (0.01 s, 100 Hz)
     q, dq = np.asarray(q, dtype=float), np.asarray(dq, dtype=float)
     error = np.asarray(q_des) - q
     delta_error = np.zeros(7) if _prev_error is None else error - _prev_error
@@ -439,57 +448,80 @@ def plan_trajectory(q_start, q_end, T, dt):
 
 
 # ==========================================================
-# INFRASTRUCTURE — DO NOT MODIFY BELOW
+# DO NOT MODIFY BELOW
 # ==========================================================
 
 CMD_SIZE = 9
 GRIPPER_CTRL = 255.0
+TRAJ_DURATION = 4.0
+TRAJ_DT = 0.01
 
+# Team-specific start and end configurations.
 # Team 5, the folded approach (Challenge 2): stretched out in front -> folded back.
 Q_START = np.array([0.3,  0.9, 0.0, -0.5,  0.0, 1.4,  0.785])
 Q_END   = np.array([0.0, -1.0, 0.0, -2.95, 0.0, 1.95, 0.785])
 
-TRAJ_DURATION = 4.0
-CONTROL_DT    = 0.004      # 250 Hz torque loop
-HOLD_AFTER    = 2.0        # keep controlling at Q_END for this long, then keep holding
-
-
 class ControllerNode(Node):
     def __init__(self):
         super().__init__('controller_node')
-        self.q_current = None
+        self.q_current = np.zeros(7)
         self.dq_current = np.zeros(7)
+        
+        self.q_traj = None
+        self.dq_traj = None
+        self.ddq_traj = None
+        self.step_idx = 0
 
         self.create_subscription(JointState, 'joint_state', self.on_joint_state, 10)
         self.cmd_pub = self.create_publisher(Float64MultiArray, 'joint_commands', 10)
 
-        self.t_array, self.q_traj, self.dq_traj, self.ddq_traj = plan_trajectory(
-            Q_START, Q_END, TRAJ_DURATION, CONTROL_DT)
-        self.step_idx = 0
-        self.get_logger().info(
-            f"Trajectory: {len(self.t_array)} samples over {self.t_array[-1]:.2f} s, "
-            f"torque loop at {1.0 / CONTROL_DT:.0f} Hz, mode {CONTROL_MODE}")
-        self.create_timer(CONTROL_DT, self.tick)
+        self.create_timer(0.5, self.start_trajectory_once)
 
     def on_joint_state(self, msg):
         self.q_current = np.array(msg.position[:7])
-        if len(msg.velocity) >= 7:
+        if hasattr(msg, 'velocity') and len(msg.velocity) >= 7:
             self.dq_current = np.array(msg.velocity[:7])
 
-    def tick(self):
-        if self.q_current is None:
-            return                                  # wait for the first joint state
-        k = min(self.step_idx, len(self.t_array) - 1)
-        if self.step_idx < len(self.t_array):
-            q_des, dq_des, ddq_des = self.q_traj[k], self.dq_traj[k], self.ddq_traj[k]
-        else:
-            q_des, dq_des, ddq_des = Q_END, np.zeros(7), np.zeros(7)
+    def start_trajectory_once(self):
+        if self.q_traj is not None:
+            return
 
-        tau = compute_torques(self.q_current, self.dq_current, q_des, dq_des, ddq_des, CONTROL_DT)
+        result = plan_trajectory(Q_START, Q_END, TRAJ_DURATION, TRAJ_DT)
+        if result is None:
+            return
+
+        _, self.q_traj, self.dq_traj, self.ddq_traj = result
+        self.get_logger().info("Trajectory generated. Starting Controller.")
+        
+        # Switch to the control loop timer
+        # Fix to the template (the only change below the line): in ROS 2 Humble, Node.timers is a
+        # generator, so self.timers[0] raises "TypeError: 'generator' object is not subscriptable"
+        # and the node dies when the trajectory starts. list(...) makes it a list first.
+        self.destroy_timer(list(self.timers)[0])
+        self.create_timer(TRAJ_DT, self.control_loop)
+
+    def control_loop(self):
+        if self.step_idx >= len(self.q_traj):
+            # Hold final position by sending zero velocity and holding torque
+            cmd = Float64MultiArray()
+            M, Cg = compute_dynamics(self.q_current, np.zeros(7), np.zeros(7))
+            cmd.data = Cg.tolist() + [GRIPPER_CTRL, 0.0]
+            self.cmd_pub.publish(cmd)
+            return
+
+        q_des = self.q_traj[self.step_idx]
+        dq_des = self.dq_traj[self.step_idx]
+        ddq_des = self.ddq_traj[self.step_idx]
+
+        torques = compute_torques(
+            self.q_current, self.dq_current, 
+            q_des, dq_des, ddq_des
+        )
 
         cmd = Float64MultiArray()
-        cmd.data = [float(v) for v in tau] + [GRIPPER_CTRL, 0.0]
+        cmd.data = torques.tolist() + [GRIPPER_CTRL, 0.0]
         self.cmd_pub.publish(cmd)
+
         self.step_idx += 1
 
 
@@ -499,7 +531,6 @@ def main(args=None):
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()
