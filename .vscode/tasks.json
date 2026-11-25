@@ -56,6 +56,14 @@
             "command": "${workspaceFolder}/scripts/run_ch3.sh ${input:ch3Mode}",
             "presentation": { "reveal": "always", "panel": "new" },
             "problemMatcher": []
+        },
+        {
+            "label": "Run Challenge 3 (+20% mass)",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/run_ch3.sh ${input:ch3MassMode}",
+            "options": { "env": { "MASS20": "1" } },
+            "presentation": { "reveal": "always", "panel": "new" },
+            "problemMatcher": []
         }
     ],
     "inputs": [
@@ -65,6 +73,13 @@
             "description": "Which controller should drive the Panda?",
             "options": ["model_flc", "gravity_flc", "model_only", "flc_only", "verify"],
             "default": "model_flc"
+        },
+        {
+            "id": "ch3MassMode",
+            "type": "pickString",
+            "description": "Every simulated link 20% heavier than the model. Which controller?",
+            "options": ["gravity_flc", "model_flc"],
+            "default": "gravity_flc"
         },
         {
             "id": "ms4Mode",
